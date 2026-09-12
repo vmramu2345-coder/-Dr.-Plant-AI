@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes laser-scan {
+  0% { top: 5%; opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { top: 90%; opacity: 0.8; }
+}
+
+.animate-laser {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #22c55e;
+  box-shadow: 0 0 15px #22c55e, 0 0 30px #22c55e;
+  animation: laser-scan 2s infinite ease-in-out alternate;
+}
