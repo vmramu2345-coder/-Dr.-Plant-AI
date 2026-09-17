@@ -146,8 +146,12 @@ app.post('/api/scan', upload.single('image'), async (req, res) => {
   }
 });
 
-// Start Express Server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Dr. Plant AI Server listening on http://localhost:${PORT}`);
-});
+// Start server locally, or export default for Vercel serverless functions
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`🚀 Dr. Plant AI Server listening on http://localhost:${PORT}`);
+  });
+}
+
+export default app;
