@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { scanPlantImage, fetchExpoStats } from './services/api';
 import PlantScanner from './components/PlantScanner';
+import DiagnosisResult from './components/DiagnosisResult';
 
 // Complete Multilingual UI Translation Dictionary
 const UI_TEXT = {
@@ -113,6 +114,111 @@ const UI_TEXT = {
     prevention: "बचाव के उपाय",
     noData: "कोई स्कैन डेटा उपलब्ध नहीं है",
     closeCam: "कैमरा बंद करें"
+  },
+  ta: {
+    appName: "டாக்டர் பிளான்ட் AI",
+    badge: "எக்ஸ்போ புரோ",
+    subTitle: "உடனடி AI நோய் கண்டறிதல் மற்றும் பலமொழி சிகிச்சை திட்டம்",
+    newScan: "புதிய ஸ்கேன்",
+    none: "எதுவுமில்லை",
+    targetType: "இலக்கு வகை",
+    leaf: "இலை",
+    plant: "செடி",
+    tree: "மரம்",
+    scans: "மொத்த ஸ்கேன்கள்",
+    healthy: "ஆரோக்கியமானது",
+    diseased: "பாதிக்கப்பட்டது",
+    accuracy: "துல்லிய விகிதம்",
+    scanTitle: "ஸ்கேன் செய்ய தயார்",
+    scanSub: "கேமராவை திறக்கவும் அல்லது புகைப்படத்தை பதிவேற்றவும்",
+    openCamera: "கேமராவை திற",
+    captureBtn: "படம் எடுத்து பகுப்பாய்வு செய்",
+    chooseFile: "கோப்பைத் தேர்ந்தெடு",
+    scanning: "ஆராய்கிறது...",
+    docHeader: "AI மருத்துவர் கண்டறிதல்",
+    docPlaceholder: "AI நோய் கண்டறிதலைக் கேட்க தாவரத்தை ஸ்கேன் செய்யவும்...",
+    speciesLabel: "தாவர வகை",
+    noTargetScanned: "எதுவும் ஸ்கேன் செய்யப்படவில்லை",
+    statusReady: "தயார்",
+    listenSummary: "குரல் கேட்க",
+    downloadPdf: "PDF பதிவிறக்கவும்",
+    treatmentTitle: "பரிந்துரைக்கப்பட்ட சிகிச்சை & பராமரிப்பு",
+    water: "நீர்ப்பாசன அட்டவணை",
+    organic: "இயற்கை தீர்வு",
+    chemical: "ரசாயன தெளிப்பு",
+    prevention: "தடுப்பு முறைகள்",
+    noData: "தரவு எதுவும் இல்லை",
+    closeCam: "கேமராவை மூடு"
+  },
+  kn: {
+    appName: "ಡಾ. ಪ್ಲಾಂಟ್ AI",
+    badge: "ಎಕ್ಸ್‌ಪೋ ಪ್ರೊ",
+    subTitle: "ತಕ್ಷಣದ AI ರೋಗನಿರ್ಣಯ ಮತ್ತು ಬಹುಭಾಷಾ ಚಿಕಿತ್ಸಾ ಯೋಜನೆ",
+    newScan: "ಹೊಸ ಸ್ಕ್ಯಾನ್",
+    none: "ಯಾವುದೂ ಇಲ್ಲ",
+    targetType: "ಗುರಿ ಆಯ್ಕೆಮಾಡಿ",
+    leaf: "ಎಲೆ",
+    plant: "ಗಿಡ",
+    tree: "ಮರ",
+    scans: "ಒಟ್ಟು ಸ್ಕ್ಯಾನ್‌ಗಳು",
+    healthy: "ಆರೋಗ್ಯಕರ",
+    diseased: "ರೋಗಗ್ರಸ್ತ",
+    accuracy: "ನಿಖರತೆ ದರ",
+    scanTitle: "ಸ್ಕ್ಯಾನ್ ಮಾಡಲು ಸಿದ್ಧವಾಗಿದೆ",
+    scanSub: "ಕ್ಯಾಮೆರಾ ತೆರೆಯಿರಿ ಅಥವಾ ಫೋಟೋ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
+    openCamera: "ಕ್ಯಾಮೆರಾ ತೆರೆಯಿರಿ",
+    captureBtn: "ಫೋಟೋ ತೆಗೆದು ವಿಶ್ಲೇಷಿಸಿ",
+    chooseFile: "ಫೈಲ್ ಆಯ್ಕೆಮಾಡಿ",
+    scanning: "ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ...",
+    docHeader: "AI ವೈದ್ಯರ ರೋಗನಿರ್ಣಯ",
+    docPlaceholder: "AI ವಿವರಣೆ ಕೇಳಲು ಸಸ್ಯವನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ...",
+    speciesLabel: "ಸಸ್ಯದ ತಳಿ",
+    noTargetScanned: "ಯಾವುದೇ ಸ್ಕ್ಯಾನ್ ಆಗಿಲ್ಲ",
+    statusReady: "ಸಿದ್ಧವಾಗಿದೆ",
+    listenSummary: "ಧ್ವನಿ ಕೇಳಿ",
+    downloadPdf: "PDF ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
+    treatmentTitle: "ಶಿಫಾರಸು ಮಾಡಿದ ಚಿಕಿತ್ಸೆ ಮತ್ತು ಆರೈಕೆ",
+    water: "ನೀರಿನ ವೇಳಾಪಟ್ಟಿ",
+    organic: "ಸಾವಯವ ಪರಿಹಾರ",
+    chemical: "ರಾಸಾಯನಿಕ ಸಿಂಪಡಣೆ",
+    prevention: "ತಡೆಗಟ್ಟುವಿಕೆ",
+    noData: "ಯಾವುದೇ ಮಾಹಿತಿ ಇಲ್ಲ",
+    closeCam: "ಕ್ಯಾಮೆರಾ ಮುಚ್ಚಿ"
+  },
+  ml: {
+    appName: "ഡോ. പ്ലാന്റ് AI",
+    badge: "എക്സ്പോ പ്രോ",
+    subTitle: "തൽക്ഷണ AI രോഗനിർണ്ണയവും ചികിത്സാ പദ്ധതിയും",
+    newScan: "പുതിയ സ്കാൻ",
+    none: "ഒന്നുമില്ല",
+    targetType: "ലക്ഷ്യം തിരഞ്ഞെടുക്കുക",
+    leaf: "ഇല",
+    plant: "ചെടി",
+    tree: "മരം",
+    scans: "ആകെ സ്കാനുകൾ",
+    healthy: "ആരോഗ്യമുള്ളവ",
+    diseased: "രോഗബാധിതമായവ",
+    accuracy: "കൃത്യത നിരക്ക്",
+    scanTitle: "സ്കാൻ ചെയ്യാൻ തയ്യാറാണ്",
+    scanSub: "ലൈവ് ക്യാമറ തുറക്കുക അല്ലെങ്കിൽ ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യുക",
+    openCamera: "ക്യാമറ തുറക്കുക",
+    captureBtn: "ഫോട്ടോ എടുത്തു വിശകലനം ചെയ്യുക",
+    chooseFile: "ഫയൽ തിരഞ്ഞെടുക്കുക",
+    scanning: "വിശകലനം ചെയ്യുന്നു...",
+    docHeader: "AI ഡാക്ടറുടെ രോഗനിർണ്ണയം",
+    docPlaceholder: "AI ശബ്ദം കേൾക്കാൻ ചെടി സ്കാൻ ചെയ്യുക...",
+    speciesLabel: "ചെടിയുടെ ഇനം",
+    noTargetScanned: "സ്കാൻ ചെയ്തിട്ടില്ല",
+    statusReady: "തയ്യാറാണ്",
+    listenSummary: "ശബ്ദം കേൾക്കുക",
+    downloadPdf: "PDF ഡൗൺലോഡ് ചെയ്യുക",
+    treatmentTitle: "ചികിത്സയും പരിചരണവും",
+    water: "നനയ്ക്കുന്ന സമയം",
+    organic: "ജൈവ പരിഹാരം",
+    chemical: "രാസ തളിപ്പ്",
+    prevention: "പ്രതിരോധ നടപടികൾ",
+    noData: "വിവരങ്ങൾ ലഭ്യമല്ല",
+    closeCam: "ക്യാമറ അടയ്ക്കുക"
   }
 };
 
@@ -124,7 +230,14 @@ const playVoiceSummary = (speechSummary, languageCode = 'en') => {
   if (!speechSummary || !languageCode) return;
 
   const utterance = new SpeechSynthesisUtterance(speechSummary);
-  const langMap = { 'en': 'en-US', 'te': 'te-IN', 'hi': 'hi-IN' };
+  const langMap = { 
+    'en': 'en-US', 
+    'te': 'te-IN', 
+    'hi': 'hi-IN',
+    'ta': 'ta-IN',
+    'kn': 'kn-IN',
+    'ml': 'ml-IN'
+  };
   utterance.lang = langMap[languageCode] || 'en-US';
   utterance.rate = 0.85;
   window.speechSynthesis.speak(utterance);
@@ -264,7 +377,7 @@ export default function ExpoDashboard() {
             ))}
           </div>
 
-          {/* Language Selector */}
+          {/* Multilingual Selector with Tamil, Kannada, Malayalam */}
           <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200 shadow-inner">
             <Globe className="w-4 h-4 text-emerald-600 ml-2" />
             <select 
@@ -276,6 +389,9 @@ export default function ExpoDashboard() {
               <option value="en">English (English)</option>
               <option value="te">తెలుగు (Telugu)</option>
               <option value="hi">हिंदी (Hindi)</option>
+              <option value="ta">தமிழ் (Tamil)</option>
+              <option value="kn">ಕನ್ನಡ (Kannada)</option>
+              <option value="ml">മലയാളം (Malayalam)</option>
             </select>
           </div>
         </div>
@@ -310,7 +426,7 @@ export default function ExpoDashboard() {
       {/* Main Container */}
       <main className="flex-1 p-6 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6" id="pdf-report-area">
         
-        {/* Left Section */}
+        {/* Left Section - Scanner Controls */}
         <div className="lg:col-span-5 flex flex-col gap-6">
           <div className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-emerald-100 shadow-sm flex flex-col items-center justify-center text-center">
             
@@ -370,7 +486,7 @@ export default function ExpoDashboard() {
           </div>
         </div>
 
-        {/* Right Section */}
+        {/* Right Section - Diagnostic Output */}
         <div className="lg:col-span-7 flex flex-col gap-6">
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -411,6 +527,16 @@ export default function ExpoDashboard() {
               </div>
             </div>
           </div>
+
+          {/* Render Standalone DiagnosisResult Component when available */}
+          {scanResult && (
+            <DiagnosisResult 
+              diagnosisData={{
+                diseaseName: scanResult.diseaseName || scanResult.plantName,
+                description: scanResult.description || scanResult.speechSummary
+              }} 
+            />
+          )}
 
           {/* Treatment Cards Grid */}
           <div className="flex flex-col gap-4">
