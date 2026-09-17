@@ -9,13 +9,12 @@ const connectDB = async () => {
 
   try {
     const db = await mongoose.connect(process.env.MONGO_URI, {
-      bufferCommands: false, // Disable Mongoose buffering for serverless
+      bufferCommands: false,
     });
     isConnected = db.connections[0].readyState;
-    console.log('MongoDB Connected');
+    console.log('✅ MongoDB Connected');
   } catch (error) {
-    console.error('MongoDB Connection Error:', error.message);
-    // Do not throw or exit process here in serverless
+    console.error('⚠️ MongoDB Connection Error:', error.message);
   }
 };
 
