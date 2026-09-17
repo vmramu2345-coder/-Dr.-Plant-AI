@@ -8,12 +8,9 @@ import { model } from './config/gemini.js';
 
 dotenv.config();
 
-// Connect to MongoDB
-connectDB();
-
 const app = express();
 
-// Enable CORS for all origins (or specify your Vercel frontend URL)
+// Enable CORS for all origins
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -47,12 +44,16 @@ const getUpdatedStats = async () => {
 
 // GET /api/stats
 app.get('/api/stats', async (req, res) => {
+  await connectDB();
   const stats = await getUpdatedStats();
   res.status(200).json({ success: true, stats });
 });
 
 // POST /api/scan
 app.post('/api/scan', upload.single('image'), async (req, res) => {
+  // Connect lazily when request hits to prevent serverless cold-start timeouts
+  await connectDB();
+
   try {
     const { language = 'en', scanType = 'leaf' } = req.body;
 
