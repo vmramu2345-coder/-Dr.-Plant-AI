@@ -3,13 +3,14 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const apiKey = (process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || '').trim();
+// Ensure key is trimmed of whitespace and quotes
+const apiKey = (process.env.GEMINI_API_KEY || '').trim().replace(/^["']|["']$/g, '');
 
 if (!apiKey) {
   console.warn('⚠️ GEMINI_API_KEY is missing from environment variables.');
 }
 
-const genAI = new GoogleGenerativeAI(apiKey || 'fallback_key');
+export const genAI = new GoogleGenerativeAI(apiKey);
 
 export const model = genAI.getGenerativeModel({
   model: 'gemini-1.5-flash',
