@@ -13,8 +13,14 @@ connectDB();
 
 const app = express();
 
-// Enable CORS and JSON parsing
-app.use(cors());
+// Enable CORS for all origins (or specify your Vercel frontend URL)
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// Enable JSON body parsing
 app.use(express.json({ limit: '20mb' }));
 
 // Multer memory storage configuration
