@@ -2,9 +2,9 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import multer from 'multer';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import connectDB from './config/db.js';
 import ScanLog from './models/ScanLog.js';
+import { model } from './config/gemini.js';
 
 dotenv.config();
 
@@ -20,9 +20,6 @@ app.use(express.json({ limit: '20mb' }));
 // Multer memory storage configuration
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
-
-// Helper to pull API Key from either environment variable
-const getApiKey = () => (process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || '').trim();
 
 // Fallback Helper for Dashboard Stats
 const getUpdatedStats = async () => {
@@ -65,24 +62,7 @@ app.post('/api/scan', upload.single('image'), async (req, res) => {
       return res.status(400).json({ success: false, error: 'No image file uploaded.' });
     }
 
-    const apiKey = getApiKey();
-    if (!apiKey) {
-      console.error("❌ CRITICAL ERROR: API key is missing from server/.env (Check GEMINI_API_KEY or GOOGLE_API_KEY)");
-      return res.status(500).json({ success: false, error: "Server missing API key." });
-    }
-
     console.log(`🔍 Processing ${scanType} image in language '${language}' with Gemini...`);
-
-    // Initialize Gemini instance dynamically per-request with active API key
-    const genAI = new GoogleGenerativeAI(apiKey);
-    
-    // Target active Gemini 3.6 Flash model
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-3.6-flash',
-      generationConfig: {
-        responseMimeType: 'application/json'
-      }
-    });
 
     const imagePart = {
       inlineData: {
@@ -114,6 +94,7 @@ app.post('/api/scan', upload.single('image'), async (req, res) => {
       }
     `;
 
+    // Perform AI analysis using imported model instance
     const result = await model.generateContent([prompt, imagePart]);
     const responseText = result.response.text();
 
