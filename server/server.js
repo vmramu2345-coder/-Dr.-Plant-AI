@@ -13,11 +13,15 @@ const app = express();
 // Initialize official Google Gemini client
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || process.env.GROQ_API_KEY });
 
+// Explicit CORS preflight handling to fix Vercel Network Errors
 app.use(cors({
   origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  credentials: true
 }));
+
+app.options('*', cors()); // Allow preflight on all routes
 
 app.use(express.json({ limit: '20mb' }));
 
