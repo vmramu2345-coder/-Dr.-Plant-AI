@@ -4,7 +4,7 @@ import {
   CheckCircle, AlertTriangle, Target, Droplet, Leaf, ShieldAlert, 
   Sparkles, Download, Camera 
 } from 'lucide-react';
-import { scanPlantImage, fetchExpoStats } from './services/api';
+import { fetchExpoStats } from './services/api';
 import PlantScanner from './components/PlantScanner';
 import DiagnosisResult from './components/DiagnosisResult';
 
@@ -126,7 +126,7 @@ const UI_TEXT = {
     plant: "செடி",
     tree: "மரம்",
     scans: "மொத்த ஸ்கேன்கள்",
-    healthy: "ஆரோக்கியமானது",
+    healthy: "ஆரோக்கியமானது",
     diseased: "பாதிக்கப்பட்டது",
     accuracy: "துல்லிய விகிதம்",
     scanTitle: "ஸ்கேன் செய்ய தயார்",
@@ -298,6 +298,7 @@ export default function ExpoDashboard() {
     setIsScanning(false);
   }, []);
 
+  // Updated Direct Vercel Backend Execution
   const executeScan = async (file, targetLang, targetType) => {
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     setIsScanning(true);
@@ -308,7 +309,14 @@ export default function ExpoDashboard() {
       formData.append('language', targetLang || 'en');
       formData.append('scanType', targetType || 'leaf');
 
-      const res = await scanPlantImage(formData);
+      const API_URL = "https://dr-plant-ai-git-main-mirs2.vercel.app";
+      const response = await fetch(`${API_URL}/api/scan`, {
+        method: 'POST',
+        body: formData
+      });
+
+      const res = await response.json();
+
       if (res?.success) {
         setScanResult(res.data);
         if (res.updatedStats) setStats(res.updatedStats);
@@ -320,8 +328,7 @@ export default function ExpoDashboard() {
       }
     } catch (err) {
       console.error('Scan Error Payload:', err);
-      const serverErrMsg = err?.response?.data?.error || err?.message || "Failed to reach backend server.";
-      alert(`Backend Error: ${serverErrMsg}`);
+      alert('Backend Error: Network Error');
     } finally {
       setIsScanning(false);
     }
@@ -377,7 +384,7 @@ export default function ExpoDashboard() {
             ))}
           </div>
 
-          {/* Multilingual Selector with Tamil, Kannada, Malayalam */}
+          {/* Multilingual Selector */}
           <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200 shadow-inner">
             <Globe className="w-4 h-4 text-emerald-600 ml-2" />
             <select 
@@ -528,7 +535,7 @@ export default function ExpoDashboard() {
             </div>
           </div>
 
-          {/* Render Standalone DiagnosisResult Component when available */}
+          {/* Diagnosis Result Render */}
           {scanResult && (
             <DiagnosisResult 
               diagnosisData={{
