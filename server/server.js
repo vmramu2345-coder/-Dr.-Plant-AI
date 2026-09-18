@@ -89,7 +89,7 @@ Return ONLY a raw JSON object (no markdown, no extra text) matching this structu
 }`;
 
     const response = await groq.chat.completions.create({
-      model: 'llama-3.2-11b-vision-preview',
+      model: 'qwen/qwen3.6-27b',
       messages: [
         {
           role: 'user',
