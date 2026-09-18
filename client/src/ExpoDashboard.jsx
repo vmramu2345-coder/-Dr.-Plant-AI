@@ -298,7 +298,7 @@ export default function ExpoDashboard() {
     setIsScanning(false);
   }, []);
 
-  // Updated Base64 JSON Vercel Backend Execution
+  // Base64 JSON Vercel Backend Execution
   const executeScan = async (file, targetLang, targetType) => {
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     setIsScanning(true);
@@ -344,7 +344,7 @@ export default function ExpoDashboard() {
     } catch (err) {
       console.error('Scan Error Payload:', err);
       alert('Backend Error: Network Error');
-    } fontally {
+    } finally {
       setIsScanning(false);
     }
   };
