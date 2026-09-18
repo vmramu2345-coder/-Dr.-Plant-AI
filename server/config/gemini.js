@@ -9,7 +9,11 @@ if (!token) {
   console.warn('⚠️ GEMINI_API_KEY is missing from environment variables.');
 }
 
-// Pass AQ. tokens as an accessToken, otherwise fall back to apiKey
+// Target Vertex AI explicitly when using an AQ. OAuth access token
 export const ai = token.startsWith('AQ.')
-  ? new GoogleGenAI({ accessToken: token })
+  ? new GoogleGenAI({
+      accessToken: token,
+      vertexai: true,
+      location: process.env.GCP_LOCATION || 'us-central1'
+    })
   : new GoogleGenAI({ apiKey: token });
