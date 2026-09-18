@@ -22,10 +22,17 @@ app.use(cors({
   credentials: true
 }));
 
-app.options('*', cors());
+// Explicit Preflight Handler
+app.options('*', (req, res) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  res.sendStatus(200);
+});
 
-// Increase JSON size limit to handle raw Base64 image payloads
+// Increase JSON and URL-encoded body size limit to handle raw Base64 image payloads safely
 app.use(express.json({ limit: '20mb' }));
+app.use(express.urlencoded({ limit: '20mb', extended: true }));
 
 // Helper function to fetch live scan statistics
 const getUpdatedStats = async () => {
