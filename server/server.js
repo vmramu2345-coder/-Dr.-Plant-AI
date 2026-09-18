@@ -4,7 +4,7 @@ import cors from 'cors';
 import multer from 'multer';
 import connectDB from './config/db.js';
 import ScanLog from './models/ScanLog.js';
-import { model } from './config/gemini.js';
+import { ai } from './config/gemini.js';
 
 dotenv.config();
 
@@ -69,43 +69,58 @@ app.post('/api/scan', upload.single('image'), async (req, res) => {
       return res.status(400).json({ success: false, error: 'No image file uploaded.' });
     }
 
-    console.log(`🔍 Processing ${scanType} image in language '${language}' with Gemini...`);
+    // Format proper base64 Data URL for Groq API
+    const imageBase64Data = `data:${mimeType};base64,${imageBase64}`;
 
-    const imagePart = {
-      inlineData: {
-        data: imageBase64,
-        mimeType: mimeType || 'image/jpeg'
-      }
-    };
+    console.log(`🔍 Processing ${scanType} image in language '${language}' with Groq Vision...`);
 
-    const prompt = `
-      You are an expert plant pathologist. Analyze this ${scanType} image.
-      Provide all output string values strictly in language code: "${language}".
+    const promptText = `You are an expert plant pathologist. Analyze this ${scanType} image.
+Provide all output string values strictly in language code: "${language}".
 
-      Return a JSON object matching this structure EXACTLY:
-      {
-        "plantName": "Species name and disease condition in ${language}",
-        "healthScore": 85,
-        "healthStatus": "Healthy or Disease Name in ${language}",
-        "speechSummary": "2-sentence diagnostic summary for speech synthesis in ${language}",
-        "careRequirements": {
-          "watering": "Watering guidelines in ${language}",
-          "temperature": "Temperature range",
-          "sunlight": "Sunlight advice in ${language}"
+Return ONLY a raw JSON object (no markdown, no extra text) matching this structure EXACTLY:
+{
+  "plantName": "Species name and disease condition in ${language}",
+  "healthScore": 85,
+  "healthStatus": "Healthy or Disease Name in ${language}",
+  "speechSummary": "2-sentence diagnostic summary for speech synthesis in ${language}",
+  "careRequirements": {
+    "watering": "Watering guidelines in ${language}",
+    "temperature": "Temperature range",
+    "sunlight": "Sunlight advice in ${language}"
+  },
+  "treatmentCards": {
+    "organicSolution": "Organic treatment in ${language}",
+    "chemicalSpray": "Chemical treatment in ${language}",
+    "prevention": "Preventative steps in ${language}"
+  }
+}`;
+
+    // Vision analysis using Groq's Llama 3.2 model via OpenAI client
+    const response = await ai.chat.completions.create({
+      model: 'llama-3.2-11b-vision-preview',
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: promptText,
+            },
+            {
+              type: 'image_url',
+              image_url: {
+                url: imageBase64Data,
+              },
+            },
+          ],
         },
-        "treatmentCards": {
-          "organicSolution": "Organic treatment in ${language}",
-          "chemicalSpray": "Chemical treatment in ${language}",
-          "prevention": "Preventative steps in ${language}"
-        }
-      }
-    `;
+      ],
+      temperature: 0.2,
+      response_format: { type: 'json_object' }
+    });
 
-    // Perform AI analysis using imported model instance
-    const result = await model.generateContent([prompt, imagePart]);
-    const responseText = result.response.text();
-
-    const cleanedJson = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
+    const analysisText = response.choices[0].message.content;
+    const cleanedJson = analysisText.replace(/```json/g, '').replace(/```/g, '').trim();
     const aiAnalysis = JSON.parse(cleanedJson);
 
     // Write Log Record to MongoDB (non-blocking)
