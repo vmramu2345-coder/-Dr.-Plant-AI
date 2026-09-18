@@ -78,37 +78,66 @@ export default function PlantScanner({ onCapture, onClose }) {
     setSelectedDeviceId(videoDevices[nextIndex].deviceId);
   };
 
+  // Helper to safely stop camera streams before passing image up
+  const stopCurrentStream = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+    }
+  };
+
+  // Capture, resize, and compress image before firing callback
   const capturePhoto = () => {
     const video = videoRef.current;
     if (!video || !video.videoWidth) return;
 
+    // Scale dimensions down to a max of 1024px to keep Base64 payload lightweight
+    const MAX_DIMENSION = 1024;
+    let width = video.videoWidth;
+    let height = video.videoHeight;
+
+    if (width > height && width > MAX_DIMENSION) {
+      height = Math.round((height * MAX_DIMENSION) / width);
+      width = MAX_DIMENSION;
+    } else if (height > MAX_DIMENSION) {
+      width = Math.round((width * MAX_DIMENSION) / height);
+      height = MAX_DIMENSION;
+    }
+
     const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    canvas.width = width;
+    canvas.height = height;
 
     const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(video, 0, 0, width, height);
 
+    // Compress to JPEG with 85% quality
     canvas.toBlob((blob) => {
       if (blob && onCapture) {
         const file = new File([blob], `plant-scan-${Date.now()}.jpg`, { type: 'image/jpeg' });
+        stopCurrentStream();
         onCapture(file);
       }
-    }, 'image/jpeg');
+    }, 'image/jpeg', 0.85);
   };
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file && onCapture) {
+      stopCurrentStream();
       onCapture(file);
     }
+  };
+
+  const handleClose = () => {
+    stopCurrentStream();
+    if (onClose) onClose();
   };
 
   return (
     <div className="relative w-full flex flex-col items-center bg-slate-900 p-4 rounded-xl text-white shadow-md">
       {/* Close Button */}
       <button
-        onClick={onClose}
+        onClick={handleClose}
         className="absolute top-3 right-3 z-10 p-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-full transition-colors"
       >
         <X className="w-4 h-4" />
