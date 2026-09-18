@@ -9,8 +9,6 @@ import ScanLog from './models/ScanLog.js';
 dotenv.config();
 
 const app = express();
-
-// Initialize Groq SDK with fallback for either environment variable name
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || process.env.GEMINI_API_KEY });
 
 app.use(cors({
@@ -91,7 +89,7 @@ Return ONLY a raw JSON object (no markdown, no extra text) matching this structu
 }`;
 
     const response = await groq.chat.completions.create({
-      model: 'qwen/qwen3.6-27b',
+      model: 'llama-3.2-11b-vision-preview',
       messages: [
         {
           role: 'user',
