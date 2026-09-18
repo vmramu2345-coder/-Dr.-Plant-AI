@@ -298,21 +298,36 @@ export default function ExpoDashboard() {
     setIsScanning(false);
   }, []);
 
-  // Updated Direct Vercel Backend Execution
+  // Updated Base64 JSON Vercel Backend Execution
   const executeScan = async (file, targetLang, targetType) => {
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     setIsScanning(true);
 
     try {
-      const formData = new FormData();
-      formData.append('image', file);
-      formData.append('language', targetLang || 'en');
-      formData.append('scanType', targetType || 'leaf');
+      // Helper function to convert File/Blob to Base64
+      const convertBase64 = (fileData) => {
+        return new Promise((resolve, reject) => {
+          const fileReader = new FileReader();
+          fileReader.readAsDataURL(fileData);
+          fileReader.onload = () => resolve(fileReader.result);
+          fileReader.onerror = (error) => reject(error);
+        });
+      };
+
+      const base64Image = await convertBase64(file);
 
       const API_URL = "https://dr-plant-ai-git-main-mirs2.vercel.app";
       const response = await fetch(`${API_URL}/api/scan`, {
         method: 'POST',
-        body: formData
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          imageBase64: base64Image,
+          mimeType: file.type || 'image/jpeg',
+          language: targetLang || 'en',
+          scanType: targetType || 'leaf'
+        })
       });
 
       const res = await response.json();
@@ -329,7 +344,7 @@ export default function ExpoDashboard() {
     } catch (err) {
       console.error('Scan Error Payload:', err);
       alert('Backend Error: Network Error');
-    } finally {
+    } fontally {
       setIsScanning(false);
     }
   };
