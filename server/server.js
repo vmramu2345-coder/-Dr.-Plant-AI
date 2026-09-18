@@ -95,9 +95,9 @@ Return ONLY a raw JSON object (no markdown, no extra text) matching this structu
   }
 }`;
 
-    // Vision analysis using Groq's Llama 3.2 model via OpenAI client
+    // Vision analysis using Groq's active vision model
     const response = await ai.chat.completions.create({
-      model: 'llama-3.2-11b-vision-preview',
+      model: 'qwen/qwen3.6-27b', // Active Groq vision model ID
       messages: [
         {
           role: 'user',
