@@ -51,7 +51,6 @@ app.get('/api/stats', async (req, res) => {
 
 // POST /api/scan
 app.post('/api/scan', upload.single('image'), async (req, res) => {
-  // Connect lazily when request hits to prevent serverless cold-start timeouts
   await connectDB();
 
   try {
@@ -69,7 +68,6 @@ app.post('/api/scan', upload.single('image'), async (req, res) => {
       return res.status(400).json({ success: false, error: 'No image file uploaded.' });
     }
 
-    // Format proper base64 Data URL for Groq API
     const imageBase64Data = `data:${mimeType};base64,${imageBase64}`;
 
     console.log(`🔍 Processing ${scanType} image in language '${language}' with Groq Vision...`);
@@ -95,9 +93,9 @@ Return ONLY a raw JSON object (no markdown, no extra text) matching this structu
   }
 }`;
 
-    // Vision analysis using Groq's active vision model
+    // Vision analysis using Groq's active 90B vision model
     const response = await ai.chat.completions.create({
-      model: 'qwen/qwen3.6-27b', // Active Groq vision model ID
+      model: 'llama-3.2-90b-vision-preview',
       messages: [
         {
           role: 'user',
@@ -162,7 +160,6 @@ Return ONLY a raw JSON object (no markdown, no extra text) matching this structu
   }
 });
 
-// Start server locally, or export default for Vercel serverless functions
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => {
