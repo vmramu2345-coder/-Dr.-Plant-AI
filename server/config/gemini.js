@@ -1,20 +1,15 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Ensure key is trimmed of whitespace and quotes
-const apiKey = (process.env.GEMINI_API_KEY || '').trim().replace(/^["']|["']$/g, '');
+const token = (process.env.GEMINI_API_KEY || '').trim();
 
-if (!apiKey) {
+if (!token) {
   console.warn('⚠️ GEMINI_API_KEY is missing from environment variables.');
 }
 
-export const genAI = new GoogleGenerativeAI(apiKey);
-
-export const model = genAI.getGenerativeModel({
-  model: 'gemini-1.5-flash',
-  generationConfig: {
-    responseMimeType: 'application/json'
-  }
-});
+// Pass AQ. tokens as an accessToken, otherwise fall back to apiKey
+export const ai = token.startsWith('AQ.')
+  ? new GoogleGenAI({ accessToken: token })
+  : new GoogleGenAI({ apiKey: token });
