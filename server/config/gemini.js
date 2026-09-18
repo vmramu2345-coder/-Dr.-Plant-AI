@@ -1,4 +1,4 @@
-import { GoogleGenAI } from '@google/genai';
+import Groq from 'groq-sdk';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -6,8 +6,7 @@ dotenv.config();
 const apiKey = (process.env.GEMINI_API_KEY || '').trim();
 
 if (!apiKey) {
-  console.warn('⚠️ GEMINI_API_KEY is missing from environment variables.');
+  console.warn('⚠️ API key is missing from environment variables.');
 }
 
-// Pass the key directly — AQ. keys are standard Google AI Studio Auth keys
-export const ai = new GoogleGenAI({ apiKey });
+export const ai = new Groq({ apiKey });
