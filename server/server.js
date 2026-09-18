@@ -2,14 +2,16 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import multer from 'multer';
-import Groq from 'groq-sdk';
+import { GoogleGenAI } from '@google/genai';
 import connectDB from './config/db.js';
 import ScanLog from './models/ScanLog.js';
 
 dotenv.config();
 
 const app = express();
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || process.env.GEMINI_API_KEY });
+
+// Initialize official Google Gemini client
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || process.env.GROQ_API_KEY });
 
 app.use(cors({
   origin: '*',
@@ -63,9 +65,7 @@ app.post('/api/scan', upload.single('image'), async (req, res) => {
       return res.status(400).json({ success: false, error: 'No image file uploaded.' });
     }
 
-    const imageBase64Data = `data:${mimeType};base64,${imageBase64}`;
-
-    console.log(`🔍 Processing ${scanType} image in language '${language}' with Groq Vision...`);
+    console.log(`🔍 Processing ${scanType} image in language '${language}' with Gemini Vision...`);
 
     const promptText = `You are an expert plant pathologist. Analyze this ${scanType} image.
 Provide all output string values strictly in language code: "${language}".
@@ -88,30 +88,24 @@ Return ONLY a raw JSON object (no markdown, no extra text) matching this structu
   }
 }`;
 
-    const response = await groq.chat.completions.create({
-      model: 'qwen/qwen3.6-27b',
-      messages: [
+    // Stable Gemini 2.5 Flash Vision Call
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: [
         {
-          role: 'user',
-          content: [
-            {
-              type: 'text',
-              text: promptText,
-            },
-            {
-              type: 'image_url',
-              image_url: {
-                url: imageBase64Data,
-              },
-            },
-          ],
+          inlineData: {
+            mimeType: mimeType,
+            data: imageBase64
+          }
         },
+        promptText
       ],
-      temperature: 0.2,
-      response_format: { type: 'json_object' }
+      config: {
+        responseMimeType: 'application/json'
+      }
     });
 
-    const analysisText = response.choices[0].message.content;
+    const analysisText = response.text;
     const cleanedJson = analysisText.replace(/```json/g, '').replace(/```/g, '').trim();
     const aiAnalysis = JSON.parse(cleanedJson);
 
