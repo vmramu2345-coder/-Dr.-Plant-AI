@@ -2,29 +2,28 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import multer from 'multer';
+import Groq from 'groq-sdk';
 import connectDB from './config/db.js';
 import ScanLog from './models/ScanLog.js';
-import { ai } from './config/gemini.js';
 
 dotenv.config();
 
 const app = express();
 
-// Enable CORS for all origins
+// Initialize Groq SDK with fallback for either environment variable name
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || process.env.GEMINI_API_KEY });
+
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Enable JSON body parsing
 app.use(express.json({ limit: '20mb' }));
 
-// Multer memory storage configuration
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// Fallback Helper for Dashboard Stats
 const getUpdatedStats = async () => {
   try {
     const totalScans = await ScanLog.countDocuments();
@@ -42,14 +41,12 @@ const getUpdatedStats = async () => {
   }
 };
 
-// GET /api/stats
 app.get('/api/stats', async (req, res) => {
   await connectDB();
   const stats = await getUpdatedStats();
   res.status(200).json({ success: true, stats });
 });
 
-// POST /api/scan
 app.post('/api/scan', upload.single('image'), async (req, res) => {
   await connectDB();
 
@@ -93,9 +90,8 @@ Return ONLY a raw JSON object (no markdown, no extra text) matching this structu
   }
 }`;
 
-    // Vision analysis using Groq's active 90B vision model
-    const response = await ai.chat.completions.create({
-      model: 'llama-3.2-90b-vision-preview',
+    const response = await groq.chat.completions.create({
+      model: 'qwen/qwen3.6-27b',
       messages: [
         {
           role: 'user',
@@ -121,7 +117,6 @@ Return ONLY a raw JSON object (no markdown, no extra text) matching this structu
     const cleanedJson = analysisText.replace(/```json/g, '').replace(/```/g, '').trim();
     const aiAnalysis = JSON.parse(cleanedJson);
 
-    // Write Log Record to MongoDB (non-blocking)
     try {
       const newLog = new ScanLog({
         plantName: aiAnalysis.plantName,
