@@ -149,12 +149,10 @@ Return ONLY a raw JSON object matching this structure EXACTLY:
   }
 });
 
-// Local development listener
-if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => {
-    console.log(`🚀 Dr. Plant AI Server listening on http://localhost:${PORT}`);
-  });
-}
+// Production-ready listener for Render (listens on process.env.PORT)
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`🚀 Dr. Plant AI Server listening on port ${PORT}`);
+});
 
 export default app;
