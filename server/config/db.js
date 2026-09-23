@@ -1,20 +1,23 @@
 import mongoose from 'mongoose';
 
-let isConnected = false;
+let cachedConnection = null;
 
 const connectDB = async () => {
-  if (isConnected) {
-    return;
+  if (cachedConnection) {
+    return cachedConnection;
   }
 
   try {
-    const db = await mongoose.connect(process.env.MONGO_URI, {
-      bufferCommands: false,
+    const conn = await mongoose.connect(process.env.MONGO_URI, {
+      bufferCommands: true, // Allow commands to buffer until connection is fully open
     });
-    isConnected = db.connections[0].readyState;
-    console.log('✅ MongoDB Connected');
+    
+    cachedConnection = conn;
+    console.log(`🌿 MongoDB Connected: ${conn.connection.host}`);
+    return conn;
   } catch (error) {
-    console.error('⚠️ MongoDB Connection Error:', error.message);
+    console.error(`❌ Database Connection Error: ${error.message}`);
+    throw error;
   }
 };
 
