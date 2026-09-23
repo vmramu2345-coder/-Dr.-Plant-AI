@@ -1,17 +1,9 @@
 import axios from 'axios';
 
-// Dynamically uses relative '/api' path on Vercel production (via your vercel.json proxy) 
-// and talks directly to Render when running locally on localhost
-const getApiUrl = () => {
-  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-    return 'https://dr-plant-ai.onrender.com';
-  }
-  return ''; // Uses relative path on Vercel so the vercel.json rewrite handles it
-};
-
+// Directly connects to the Render backend to bypass Vercel proxy timeouts
 const API = axios.create({
-  baseURL: `${getApiUrl()}/api`,
-  timeout: 60000 // 60-second timeout for AI image analysis & Render cold starts
+  baseURL: 'https://dr-plant-ai.onrender.com/api',
+  timeout: 60000 // 60-second timeout for Gemini AI analysis and Render cold starts
 });
 
 export const scanPlantImage = async (formData) => {
@@ -32,7 +24,12 @@ export const fetchExpoStats = async () => {
     console.warn('Backend unavailable, using fallback stats');
     return {
       success: true,
-      stats: { totalScans: 142, healthyCount: 108, diseasedCount: 34, accuracyRate: 96 }
+      stats: { 
+        totalScans: 142, 
+        healthyCount: 108, 
+        diseasedCount: 34, 
+        accuracyRate: 96 
+      }
     };
   }
 };
