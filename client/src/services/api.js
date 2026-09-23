@@ -1,9 +1,16 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://dr-plant-ai.onrender.com';
+// Dynamically uses relative '/api' path on Vercel (via vercel.json proxy) 
+// and talks directly to Render when running locally on localhost
+const getApiUrl = () => {
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+    return 'https://dr-plant-ai.onrender.com';
+  }
+  return ''; // Uses relative path on Vercel production
+};
 
 const API = axios.create({
-  baseURL: `${API_URL}/api`,
+  baseURL: `${getApiUrl()}/api`,
   timeout: 60000 // 60-second timeout for AI image analysis
 });
 
