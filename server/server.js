@@ -9,25 +9,12 @@ dotenv.config();
 
 const app = express();
 
+// Enable standard CORS for all origins
+app.use(cors());
+
 // Initialize Gemini API client
 const ai = new GoogleGenAI({ 
   apiKey: process.env.GEMINI_API_KEY || process.env.GROQ_API_KEY 
-});
-
-// Configure CORS for serverless edge functions
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  credentials: true
-}));
-
-// Explicit Preflight Handler
-app.options('*', (req, res) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-  res.sendStatus(200);
 });
 
 // Increase JSON and URL-encoded body size limit to handle raw Base64 image payloads safely
