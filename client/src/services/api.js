@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-// Absolute URL forced to Render to completely eliminate any fallback to Vercel
+// Uses Vercel's environment variable with a safe fallback to Render
 const API = axios.create({
-  baseURL: 'https://dr-plant-ai.onrender.com/api',
+  baseURL: import.meta.env.VITE_API_URL || 'https://dr-plant-ai.onrender.com/api',
   timeout: 90000
 });
 
