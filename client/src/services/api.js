@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-// Directly point to Render production backend to completely bypass Vercel proxy issues
+// Absolute URL forced to Render to completely eliminate any fallback to Vercel
 const API = axios.create({
   baseURL: 'https://dr-plant-ai.onrender.com/api',
-  timeout: 90000 // Extended to 90 seconds to safely handle Render free-tier cold starts
+  timeout: 90000
 });
 
 export const scanPlantImage = async (formData) => {
