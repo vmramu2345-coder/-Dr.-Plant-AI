@@ -9,13 +9,15 @@ dotenv.config();
 
 const app = express();
 
-// Enable explicit CORS for your Vercel frontend and local development
+// Enable dynamic CORS for all Vercel deployment subdomains and local development
 app.use(cors({
-  origin: [
-    'https://dr-plant-ai.vercel.app', 
-    'http://localhost:5173', 
-    'http://localhost:3000'
-  ],
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true); // Allow non-browser tools (Postman, curl)
+    if (origin.endsWith('.vercel.app') || origin.includes('localhost')) {
+      return callback(null, true);
+    }
+    callback(new Error('Blocked by CORS policy'));
+  },
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
