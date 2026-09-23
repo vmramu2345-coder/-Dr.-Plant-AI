@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const API_URL = import.meta.env.VITE_API_URL || 'https://dr-plant-ai.onrender.com';
+
 const API = axios.create({
-  baseURL: '/api',
+  baseURL: `${API_URL}/api`,
   timeout: 60000 // 60-second timeout for AI image analysis
 });
 
