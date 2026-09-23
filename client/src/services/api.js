@@ -1,15 +1,12 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://dr-plant-ai.onrender.com';
-
 const API = axios.create({
-  baseURL: `${API_URL}/api`,
-  timeout: 30000 // 30-second timeout for AI image analysis
+  baseURL: '/api',
+  timeout: 60000 // 60-second timeout for AI image analysis
 });
 
 export const scanPlantImage = async (formData) => {
   try {
-    // Let Axios automatically set the boundary headers for FormData
     const response = await API.post('/scan', formData);
     return response.data;
   } catch (error) {
