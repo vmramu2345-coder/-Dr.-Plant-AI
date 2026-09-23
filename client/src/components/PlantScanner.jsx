@@ -1,220 +1,163 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Camera, X, Upload, AlertCircle, RefreshCw } from 'lucide-react';
+import React, { useState } from 'react';
+import { scanPlantImage } from '../services/api';
 
-export default function PlantScanner({ onCapture, onClose }) {
-  const videoRef = useRef(null);
-  const streamRef = useRef(null);
-  const fileInputRef = useRef(null);
+export default function PlantScanner({ onScanComplete }) {
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imageBase64, setImageBase64] = useState('');
+  const [mimeType, setMimeType] = useState('image/jpeg');
+  const [language, setLanguage] = useState('en');
+  const [scanType, setScanType] = useState('leaf');
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const [videoDevices, setVideoDevices] = useState([]);
-  const [selectedDeviceId, setSelectedDeviceId] = useState('');
-  const [noCameraDetected, setNoCameraDetected] = useState(false);
+  // Handle file selection from file input or camera capture
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-  // Fetch all physical cameras on mobile/desktop
-  const getCameraDevices = async () => {
+    setMimeType(file.type || 'image/jpeg');
+    setSelectedImage(URL.createObjectURL(file));
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImageBase64(reader.result); // Base64 data URL string
+    };
+    reader.readAsDataURL(file);
+    setErrorMsg('');
+  };
+
+  // Submit scan to backend API
+  const handleScanSubmit = async (e) => {
+    e.preventDefault();
+    if (!imageBase64) {
+      setErrorMsg('Please select or capture a plant image first.');
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMsg('');
+
     try {
-      const initialStream = await navigator.mediaDevices.getUserMedia({ video: true });
-      initialStream.getTracks().forEach((track) => track.stop());
+      const response = await scanPlantImage({
+        imageBase64,
+        mimeType,
+        language,
+        scanType
+      });
 
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoInputs = devices.filter((device) => device.kind === 'videoinput');
-
-      setVideoDevices(videoInputs);
-
-      if (videoInputs.length > 0) {
-        // Default to the last device (typically the main rear camera on mobile)
-        setSelectedDeviceId(videoInputs[videoInputs.length - 1].deviceId);
+      if (response.success) {
+        if (onScanComplete) {
+          onScanComplete(response.data);
+        }
+      } else {
+        throw new Error(response.error || 'Unknown server error');
       }
     } catch (err) {
-      console.error('Camera Hardware Error:', err);
-      setNoCameraDetected(true);
+      console.error('Scan submission caught error:', err);
+      const detailedMessage = err.message || 'Network Error connecting to backend.';
+      setErrorMsg(detailedMessage);
+    } finally {
+      setIsLoading(false);
     }
-  };
-
-  useEffect(() => {
-    getCameraDevices();
-  }, []);
-
-  // Update active video stream when a camera device is selected
-  useEffect(() => {
-    if (!selectedDeviceId) return;
-
-    async function startStream() {
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach((track) => track.stop());
-      }
-
-      setNoCameraDetected(false);
-
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { deviceId: { exact: selectedDeviceId } }
-        });
-
-        streamRef.current = stream;
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-        }
-      } catch (err) {
-        console.error('Camera stream error:', err);
-        setNoCameraDetected(true);
-      }
-    }
-
-    startStream();
-
-    return () => {
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach((track) => track.stop());
-      }
-    };
-  }, [selectedDeviceId]);
-
-  // Cycle through available camera hardware
-  const cycleCamera = () => {
-    if (videoDevices.length <= 1) return;
-    const currentIndex = videoDevices.findIndex((d) => d.deviceId === selectedDeviceId);
-    const nextIndex = (currentIndex + 1) % videoDevices.length;
-    setSelectedDeviceId(videoDevices[nextIndex].deviceId);
-  };
-
-  // Helper to safely stop camera streams before passing image up
-  const stopCurrentStream = () => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
-    }
-  };
-
-  // Capture, resize, and compress image before firing callback
-  const capturePhoto = () => {
-    const video = videoRef.current;
-    if (!video || !video.videoWidth) return;
-
-    // Scale dimensions down to a max of 1024px to keep Base64 payload lightweight
-    const MAX_DIMENSION = 1024;
-    let width = video.videoWidth;
-    let height = video.videoHeight;
-
-    if (width > height && width > MAX_DIMENSION) {
-      height = Math.round((height * MAX_DIMENSION) / width);
-      width = MAX_DIMENSION;
-    } else if (height > MAX_DIMENSION) {
-      width = Math.round((width * MAX_DIMENSION) / height);
-      height = MAX_DIMENSION;
-    }
-
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0, width, height);
-
-    // Compress to JPEG with 85% quality
-    canvas.toBlob((blob) => {
-      if (blob && onCapture) {
-        const file = new File([blob], `plant-scan-${Date.now()}.jpg`, { type: 'image/jpeg' });
-        stopCurrentStream();
-        onCapture(file);
-      }
-    }, 'image/jpeg', 0.85);
-  };
-
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file && onCapture) {
-      stopCurrentStream();
-      onCapture(file);
-    }
-  };
-
-  const handleClose = () => {
-    stopCurrentStream();
-    if (onClose) onClose();
   };
 
   return (
-    <div className="relative w-full flex flex-col items-center bg-slate-900 p-4 rounded-xl text-white shadow-md">
-      {/* Close Button */}
-      <button
-        onClick={handleClose}
-        className="absolute top-3 right-3 z-10 p-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-full transition-colors"
-      >
-        <X className="w-4 h-4" />
-      </button>
+    <div className="max-w-2xl mx-auto p-6 bg-white rounded-2xl shadow-xl border border-gray-100">
+      <h2 className="text-2xl font-bold text-green-800 mb-4 text-center">
+        🌿 Dr. Plant AI Diagnostics
+      </h2>
 
-      {noCameraDetected ? (
-        <div className="w-full py-6 flex flex-col items-center justify-center text-center">
-          <AlertCircle className="w-10 h-10 text-amber-400 mb-2" />
-          <h4 className="text-sm font-bold text-slate-100 mb-1">No Camera Available</h4>
-          <p className="text-xs text-slate-400 max-w-xs mb-4">
-            No physical camera detected. Upload an image file to proceed with AI analysis.
-          </p>
+      <form onSubmit={handleScanSubmit} className="space-y-6">
+        {/* Controls row: Language and Scan Type */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Select Language
+            </label>
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+            >
+              <option value="en">English</option>
+              <option value="te">Telugu (తెలుగు)</option>
+              <option value="hi">Hindi (हिन्दी)</option>
+              <option value="ta">Tamil (தமிழ்)</option>
+            </select>
+          </div>
 
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Scan Type
+            </label>
+            <select
+              value={scanType}
+              onChange={(e) => setScanType(e.target.value)}
+              className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+            >
+              <option value="leaf">Leaf</option>
+              <option value="stem">Stem / Trunk</option>
+              <option value="fruit">Fruit / Vegetable</option>
+              <option value="whole plant">Whole Plant</option>
+            </select>
+          </div>
+        </div>
+
+        {/* File / Camera Input */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Upload or Capture Plant Image
+          </label>
           <input
             type="file"
-            ref={fileInputRef}
-            onChange={handleFileUpload}
             accept="image/*"
-            className="hidden"
+            onChange={handleImageChange}
+            className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer"
           />
-
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="flex items-center gap-2 py-2.5 px-5 bg-emerald-600 hover:bg-emerald-500 rounded-xl text-xs font-bold transition-colors shadow"
-          >
-            <Upload className="w-4 h-4" />
-            Upload Plant Photo
-          </button>
         </div>
-      ) : (
-        <>
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            className="w-full h-64 object-cover rounded-lg bg-black mb-3 border border-slate-800"
-          />
 
-          {/* Camera Selection Dropdown for Multi-Camera Devices */}
-          {videoDevices.length > 1 && (
-            <select
-              value={selectedDeviceId}
-              onChange={(e) => setSelectedDeviceId(e.target.value)}
-              className="mb-3 w-full max-w-xs bg-slate-800 text-xs text-slate-200 border border-slate-700 rounded-lg p-2 focus:outline-none"
-            >
-              {videoDevices.map((device, idx) => (
-                <option key={device.deviceId} value={device.deviceId}>
-                  {device.label || `Camera ${idx + 1}`}
-                </option>
-              ))}
-            </select>
-          )}
-
-          <div className="flex gap-3">
-            {/* Switch Camera Button */}
-            {videoDevices.length > 1 && (
-              <button
-                onClick={cycleCamera}
-                className="flex items-center gap-2 py-2 px-4 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs font-bold transition-colors"
-              >
-                <RefreshCw className="w-4 h-4" />
-                Switch Cam
-              </button>
-            )}
-
-            {/* Capture Button */}
-            <button
-              onClick={capturePhoto}
-              className="flex items-center gap-2 py-2 px-5 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-xs font-bold transition-colors"
-            >
-              <Camera className="w-4 h-4" />
-              Capture Photo
-            </button>
+        {/* Image Preview Box */}
+        {selectedImage && (
+          <div className="mt-4 flex justify-center">
+            <img
+              src={selectedImage}
+              alt="Plant Preview"
+              className="max-h-64 rounded-lg object-contain border border-gray-200 shadow-sm"
+            />
           </div>
-        </>
-      )}
+        )}
+
+        {/* Error Notification */}
+        {errorMsg && (
+          <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+            <strong>Error:</strong> {errorMsg}
+          </div>
+        )}
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={isLoading || !imageBase64}
+          className={`w-full py-3 px-4 rounded-xl text-white font-semibold transition shadow-md ${
+            isLoading || !imageBase64
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300'
+          }`}
+        >
+          {isLoading ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              >
+              </svg>
+              Analyzing Plant (Waking up server if idle)...
+            </span>
+          ) : (
+            'Diagnose Plant Health'
+          )}
+        </button>
+      </form>
     </div>
   );
 }
