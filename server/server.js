@@ -9,8 +9,20 @@ dotenv.config();
 
 const app = express();
 
-// Enable standard CORS for all origins
-app.use(cors());
+// Enable explicit CORS for your Vercel frontend and local development
+app.use(cors({
+  origin: [
+    'https://dr-plant-ai.vercel.app', 
+    'http://localhost:5173', 
+    'http://localhost:3000'
+  ],
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
+
+// Ensure preflight requests are handled explicitly
+app.options('*', cors());
 
 // Initialize Gemini API client
 const ai = new GoogleGenAI({ 
