@@ -150,17 +150,18 @@ Return ONLY a raw JSON object matching this structure EXACTLY:
   }
 });
 
-// Production-ready listener for Render / Local
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, async () => {
-  console.log(`🚀 Dr. Plant AI Server listening on port ${PORT}`);
-  
-  // Test and display MongoDB connection immediately on startup
-  try {
-    await connectDB();
-  } catch (err) {
-    console.error('⚠️ Initial database connection warning:', err.message);
-  }
-});
+// Local development fallback runner (Ignored by Vercel serverless runtime)
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, async () => {
+    console.log(`🚀 Dr. Plant AI Server listening locally on port ${PORT}`);
+    try {
+      await connectDB();
+    } catch (err) {
+      console.error('⚠️ Initial database connection warning:', err.message);
+    }
+  });
+}
 
+// Export app for Vercel Serverless Function routing
 export default app;
