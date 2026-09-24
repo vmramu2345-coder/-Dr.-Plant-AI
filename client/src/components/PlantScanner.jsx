@@ -85,12 +85,21 @@ export default function PlantScanner({ onCapture, onClose }) {
     }
   };
 
-  // Capture, resize, and compress image before firing callback
+  // 1. Helper to convert a file/blob to a Base64 string
+  const convertBlobToBase64 = (blob) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
+
+  // 2. Updated capture, compress, and convert to Base64 before firing callback
   const capturePhoto = () => {
     const video = videoRef.current;
     if (!video || !video.videoWidth) return;
 
-    // Scale dimensions down to a max of 1024px to keep Base64 payload lightweight
     const MAX_DIMENSION = 1024;
     let width = video.videoWidth;
     let height = video.videoHeight;
@@ -110,21 +119,30 @@ export default function PlantScanner({ onCapture, onClose }) {
     const ctx = canvas.getContext('2d');
     ctx.drawImage(video, 0, 0, width, height);
 
-    // Compress to JPEG with 85% quality
-    canvas.toBlob((blob) => {
+    canvas.toBlob(async (blob) => {
       if (blob && onCapture) {
-        const file = new File([blob], `plant-scan-${Date.now()}.jpg`, { type: 'image/jpeg' });
-        stopCurrentStream();
-        onCapture(file);
+        try {
+          const base64String = await convertBlobToBase64(blob);
+          stopCurrentStream();
+          onCapture(base64String); // Passes clean base64 string up
+        } catch (err) {
+          console.error('Base64 conversion error:', err);
+        }
       }
     }, 'image/jpeg', 0.85);
   };
 
-  const handleFileUpload = (e) => {
+  // 3. Updated file upload handler
+  const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (file && onCapture) {
-      stopCurrentStream();
-      onCapture(file);
+      try {
+        const base64String = await convertBlobToBase64(file);
+        stopCurrentStream();
+        onCapture(base64String); // Passes clean base64 string up
+      } catch (err) {
+        console.error('File read error:', err);
+      }
     }
   };
 
