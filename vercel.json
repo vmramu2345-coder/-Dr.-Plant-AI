@@ -1,5 +1,9 @@
 {
+  "version": 2,
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://dr-plant-ai.onrender.com/api/:path*" }
+    {
+      "source": "/api/(.*)",
+      "destination": "/server/server.js"
+    }
   ]
 }
