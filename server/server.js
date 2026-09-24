@@ -150,10 +150,17 @@ Return ONLY a raw JSON object matching this structure EXACTLY:
   }
 });
 
-// Production-ready listener for Render (listens on process.env.PORT)
+// Production-ready listener for Render / Local
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`🚀 Dr. Plant AI Server listening on port ${PORT}`);
+  
+  // Test and display MongoDB connection immediately on startup
+  try {
+    await connectDB();
+  } catch (err) {
+    console.error('⚠️ Initial database connection warning:', err.message);
+  }
 });
 
 export default app;
