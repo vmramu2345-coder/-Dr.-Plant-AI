@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   Bot, Globe, RotateCcw, Volume2, Upload, ScanLine, Activity, 
   CheckCircle, AlertTriangle, Target, Droplet, Leaf, ShieldAlert, 
-  Sparkles, Download, Camera 
+  Sparkles, Download, Camera, Sprout, TreePine
 } from 'lucide-react';
 import { fetchExpoStats } from './services/api';
 import PlantScanner from './components/PlantScanner';
@@ -406,6 +406,7 @@ export default function ExpoDashboard() {
   ];
 
   const pageTitles = [t.scanTitle, t.speciesLabel, t.treatmentTitle];
+  const PlantIcon = scanType === 'tree' ? TreePine : scanType === 'plant' ? Sprout : Leaf;
 
   return (
     <div className="plant-app min-h-screen text-slate-800">
@@ -444,12 +445,12 @@ export default function ExpoDashboard() {
           {currentPage === 2 && (
             <section className="focus-layout result-layout">
               <div className="intro-copy"><span className="eyebrow">02 / {t.speciesLabel}</span><h2>{scanResult?.plantName || t.noTargetScanned}</h2><p>{scanResult?.description || t.scanSub}</p><button onClick={() => setCurrentPage(3)} className="next-action">View care plan <span>→</span></button></div>
-              <div className="result-visual"><div className="health-ring" style={{ '--health': `${scanResult?.healthScore || 0}%` }}><div><strong>{scanResult?.healthScore || 0}%</strong><span>{scanResult?.healthStatus || t.statusReady}</span></div></div><div className="result-stats"><div><small>{t.scans}</small><strong>{stats?.totalScans || 0}</strong></div><div><small>{t.accuracy}</small><strong>{stats?.accuracyRate || 96}%</strong></div></div><button onClick={() => scanResult ? window.print() : alert(t.noData)} className="download-action"><Download className="w-4 h-4" /> {t.downloadPdf}</button></div>
+              <div className="result-visual"><div className={`plant-illustration plant-illustration-${scanType}`}><span className="illustration-orbit orbit-one"></span><span className="illustration-orbit orbit-two"></span><PlantIcon className="plant-hero-icon" /><span className="scan-dot dot-one"></span><span className="scan-dot dot-two"></span></div><div className="health-ring" style={{ '--health': `${scanResult?.healthScore || 0}%` }}><div><strong>{scanResult?.healthScore || 0}%</strong><span>{scanResult?.healthStatus || t.statusReady}</span></div></div><div className="result-stats"><div><small>{t.scans}</small><strong>{stats?.totalScans || 0}</strong></div><div><small>{t.accuracy}</small><strong>{stats?.accuracyRate || 96}%</strong></div></div><button onClick={() => scanResult ? window.print() : alert(t.noData)} className="download-action"><Download className="w-4 h-4" /> {t.downloadPdf}</button></div>
             </section>
           )}
 
           {currentPage === 3 && (
-            <section className="care-layout"><div className="section-heading"><span className="eyebrow">03 / {t.treatmentTitle}</span><h2>{t.treatmentTitle}</h2><p>Practical next steps for a stronger, healthier plant.</p></div><div className="care-grid">{treatmentCards.map(({ label, icon: Icon, val, color }, index) => <article key={label} className={`care-card care-card-${index + 1}`}><div className={`care-icon ${color}`}><Icon className="w-5 h-5" /></div><h3>{label}</h3><p>{val || t.noData}</p></article>)}</div><div className="doctor-panel"><div className="doctor-heading"><div className="doctor-icon"><Bot className="w-5 h-5" /></div><div><span className="eyebrow">AI ASSISTANT</span><h3>{t.docHeader}</h3></div>{scanResult?.speechSummary && <button onClick={() => playVoiceSummary(scanResult.speechSummary, language)} className="listen-action"><Volume2 className="w-4 h-4" /> {t.listenSummary}</button>}</div><p>{scanResult?.speechSummary || t.docPlaceholder}</p><span className="doctor-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span></div></section>
+            <section className="care-layout"><div className="section-heading"><span className="eyebrow">03 / {t.treatmentTitle}</span><h2>{t.treatmentTitle}</h2><p>Practical next steps for a stronger, healthier plant.</p></div><div className="care-grid">{treatmentCards.map(({ label, icon: Icon, val, color }, index) => <article key={label} className={`care-card care-card-${index + 1}`}><div className={`care-icon ${color}`}><Icon className="w-5 h-5" /></div><div className="care-art" aria-hidden="true"><Icon /></div><h3>{label}</h3><p>{val || t.noData}</p></article>)}</div><div className="doctor-panel"><div className="doctor-heading"><div className="doctor-icon"><Bot className="w-5 h-5" /></div><div><span className="eyebrow">AI ASSISTANT</span><h3>{t.docHeader}</h3></div>{scanResult?.speechSummary && <button onClick={() => playVoiceSummary(scanResult.speechSummary, language)} className="listen-action"><Volume2 className="w-4 h-4" /> {t.listenSummary}</button>}</div><p>{scanResult?.speechSummary || t.docPlaceholder}</p><span className="doctor-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span></div></section>
           )}
         </div>
       </main>
