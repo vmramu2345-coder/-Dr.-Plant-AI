@@ -30,6 +30,22 @@ app.options('*', cors());
 const ai = new GoogleGenAI({ 
   apiKey: process.env.GEMINI_API_KEY || process.env.GROQ_API_KEY 
 });
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-flash-lite-latest';
+
+const generateDiagnosis = async (request) => {
+  const maxAttempts = 3;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      return await ai.models.generateContent(request);
+    } catch (error) {
+      const isUnavailable = error?.status === 503 || error?.code === 503 || error?.error?.code === 503;
+      if (!isUnavailable || attempt === maxAttempts) throw error;
+
+      await new Promise((resolve) => setTimeout(resolve, attempt * 2000));
+    }
+  }
+};
 
 // Increase JSON and URL-encoded body size limit to handle raw Base64 image payloads safely
 app.use(express.json({ limit: '20mb' }));
@@ -98,8 +114,8 @@ Return ONLY a raw JSON object matching this structure EXACTLY:
 }`;
 
     // Execute Gemini 2.5 Flash Multimodal request
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+    const response = await generateDiagnosis({
+      model: GEMINI_MODEL,
       contents: [
         { inlineData: { mimeType: mimeType, data: cleanBase64 } },
         promptText
