@@ -166,8 +166,9 @@ Return ONLY a raw JSON object matching this structure EXACTLY:
   }
 });
 
-// Local development fallback runner (Ignored by Vercel serverless runtime)
-if (process.env.NODE_ENV !== 'production') {
+// Run as a server on Render/local environments; Vercel uses the exported app.
+const isVercel = process.env.VERCEL === '1' || process.env.VERCEL === 'true';
+if (!isVercel) {
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, async () => {
     console.log(`🚀 Dr. Plant AI Server listening locally on port ${PORT}`);
