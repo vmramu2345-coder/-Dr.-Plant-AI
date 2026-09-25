@@ -250,6 +250,7 @@ export default function ExpoDashboard() {
   const [scanResult, setScanResult] = useState(null);
   const [currentFile, setCurrentFile] = useState(null);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [stats, setStats] = useState({ totalScans: 0, healthyCount: 0, diseasedCount: 0, accuracyRate: 96 });
 
@@ -296,6 +297,7 @@ export default function ExpoDashboard() {
     setScanResult(null);
     setCurrentFile(null);
     setIsScanning(false);
+    setCurrentPage(1);
   }, []);
 
   // Updated Base64 JSON Vercel Backend Execution with Image Compression
@@ -374,6 +376,7 @@ export default function ExpoDashboard() {
 
       if (res?.success) {
         setScanResult(res.data);
+        setCurrentPage(2);
         if (res.updatedStats) setStats(res.updatedStats);
         if (res.data?.speechSummary && targetLang) {
           playVoiceSummary(res.data.speechSummary, targetLang);
@@ -395,238 +398,60 @@ export default function ExpoDashboard() {
     await executeScan(file, language, scanType);
   };
 
+  const treatmentCards = [
+    { label: t.water, icon: Droplet, val: scanResult?.careRequirements?.watering || scanResult?.treatmentCards?.watering, color: 'text-blue-600 bg-blue-50' },
+    { label: t.organic, icon: Leaf, val: scanResult?.treatmentCards?.organicSolution, color: 'text-emerald-600 bg-emerald-50' },
+    { label: t.chemical, icon: ShieldAlert, val: scanResult?.treatmentCards?.chemicalSpray, color: 'text-amber-600 bg-amber-50' },
+    { label: t.prevention, icon: Sparkles, val: scanResult?.treatmentCards?.prevention, color: 'text-violet-600 bg-violet-50' }
+  ];
+
+  const pageTitles = [t.scanTitle, t.speciesLabel, t.treatmentTitle];
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50/80 via-teal-50/30 to-slate-100 text-slate-800 flex flex-col font-sans">
-      
-      {/* Header Bar */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-emerald-100/80 px-6 py-4 flex flex-wrap items-center justify-between gap-4 shadow-sm">
+    <div className="plant-app min-h-screen text-slate-800">
+      <header className="plant-header">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 bg-emerald-100/80 border border-emerald-200 rounded-xl shadow-inner">
-            <Bot className="w-7 h-7 text-emerald-700" />
-          </div>
+          <div className="brand-mark"><Bot className="w-6 h-6" /></div>
           <div>
-            <h1 className="text-xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
-              {t.appName} <span className="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full border border-emerald-300 font-bold">{t.badge}</span>
-            </h1>
-            <p className="text-xs text-slate-500 font-medium">{t.subTitle}</p>
+            <h1 className="text-xl font-black tracking-tight text-slate-950">{t.appName}</h1>
+            <p className="text-xs font-medium text-slate-500">{t.subTitle}</p>
           </div>
         </div>
-
-        {/* Action Controls */}
-        <div className="flex items-center gap-3 flex-wrap">
-          {scanResult && (
-            <button
-              onClick={handleResetScan}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-600 hover:text-emerald-700 bg-slate-100 hover:bg-emerald-50 rounded-xl border border-slate-200 transition-colors"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              {t.newScan}
-            </button>
-          )}
-
-          {/* Target Type Toggle */}
-          <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
-            {['leaf', 'plant', 'tree'].map((type) => (
-              <button
-                key={type}
-                onClick={() => handleScanTypeChange(type)}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${
-                  scanType === type ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                {t[type]}
-              </button>
-            ))}
+        <div className="flex items-center gap-2 flex-wrap justify-end">
+          {scanResult && <button onClick={handleResetScan} className="toolbar-button"><RotateCcw className="w-4 h-4" /> {t.newScan}</button>}
+          <div className="target-picker">
+            {['leaf', 'plant', 'tree'].map((type) => <button key={type} onClick={() => handleScanTypeChange(type)} className={scanType === type ? 'active' : ''}>{t[type]}</button>)}
           </div>
-
-          {/* Multilingual Selector */}
-          <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200 shadow-inner">
-            <Globe className="w-4 h-4 text-emerald-600 ml-2" />
-            <select 
-              value={language}
-              onChange={handleLanguageChange}
-              className="bg-transparent text-slate-700 text-xs font-bold pr-3 py-1 rounded-lg border-none focus:ring-0 cursor-pointer outline-none"
-            >
-              <option value="">{t.none}</option>
-              <option value="en">English (English)</option>
-              <option value="te">తెలుగు (Telugu)</option>
-              <option value="hi">हिंदी (Hindi)</option>
-              <option value="ta">தமிழ் (Tamil)</option>
-              <option value="kn">ಕನ್ನಡ (Kannada)</option>
-              <option value="ml">മലയാളം (Malayalam)</option>
-            </select>
-          </div>
+          <label className="language-picker"><Globe className="w-4 h-4" /><select value={language} onChange={handleLanguageChange}><option value="">{t.none}</option><option value="en">English</option><option value="te">తెలుగు</option><option value="hi">हिंदी</option><option value="ta">தமிழ்</option><option value="kn">ಕನ್ನಡ</option><option value="ml">മലയാളം</option></select></label>
         </div>
       </header>
 
-      {/* Stats Metric Bar */}
-      <div className="bg-white/60 backdrop-blur-md border-b border-emerald-100 px-6 py-3">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-          <div className="flex items-center justify-center gap-2">
-            <Activity className="w-4 h-4 text-emerald-600" />
-            <span className="text-xs font-semibold text-slate-600">{t.scans}:</span>
-            <span className="text-sm font-bold text-slate-900">{stats?.totalScans || 0}</span>
-          </div>
-          <div className="flex items-center justify-center gap-2">
-            <CheckCircle className="w-4 h-4 text-teal-600" />
-            <span className="text-xs font-semibold text-slate-600">{t.healthy}:</span>
-            <span className="text-sm font-bold text-slate-900">{stats?.healthyCount || 0}</span>
-          </div>
-          <div className="flex items-center justify-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-amber-600" />
-            <span className="text-xs font-semibold text-slate-600">{t.diseased}:</span>
-            <span className="text-sm font-bold text-slate-900">{stats?.diseasedCount || 0}</span>
-          </div>
-          <div className="flex items-center justify-center gap-2">
-            <Target className="w-4 h-4 text-indigo-600" />
-            <span className="text-xs font-semibold text-slate-600">{t.accuracy}:</span>
-            <span className="text-sm font-bold text-slate-900">{stats?.accuracyRate || 96}%</span>
-          </div>
-        </div>
+      <div className="stepper" aria-label="Scan progress">
+        {pageTitles.map((title, index) => <button key={title} onClick={() => setCurrentPage(index + 1)} className={currentPage === index + 1 ? 'current' : currentPage > index + 1 ? 'complete' : ''}><span>{index + 1}</span><strong>{title}</strong></button>)}
       </div>
 
-      {/* Main Container */}
-      <main className="flex-1 p-6 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6" id="pdf-report-area">
-        
-        {/* Left Section - Scanner Controls */}
-        <div className="lg:col-span-5 flex flex-col gap-6">
-          <div className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-emerald-100 shadow-sm flex flex-col items-center justify-center text-center">
-            
-            {/* Embedded Live Scanner Component */}
-            {isCameraOpen ? (
-              <PlantScanner
-                onCapture={(file) => {
-                  setIsCameraOpen(false);
-                  handleScan(file);
-                }}
-                onClose={() => setIsCameraOpen(false)}
-              />
-            ) : (
-              <>
-                <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mb-4 text-emerald-600">
-                  <ScanLine className={`w-8 h-8 ${isScanning ? 'animate-pulse' : ''}`} />
-                </div>
-                <h3 className="text-lg font-bold text-slate-900 mb-1">{t.scanTitle} {t[scanType]}</h3>
-                <p className="text-xs text-slate-500 mb-6 max-w-xs">{t.scanSub}</p>
-
-                <input type="file" ref={fileInputRef} onChange={(e) => e.target.files[0] && handleScan(e.target.files[0])} accept="image/*" className="hidden" />
-
-                <div className="flex gap-3 w-full max-w-xs">
-                  <button
-                    onClick={() => setIsCameraOpen(true)}
-                    disabled={isScanning}
-                    className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-colors disabled:opacity-50"
-                  >
-                    <Camera className="w-4 h-4" />
-                    {t.openCamera}
-                  </button>
-
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isScanning}
-                    className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold transition-colors disabled:opacity-50"
-                  >
-                    <Upload className="w-4 h-4" />
-                    {isScanning ? t.scanning : t.chooseFile}
-                  </button>
-                </div>
-              </>
-            )}
-
-          </div>
-
-          <div className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-emerald-100 shadow-sm">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="p-2 bg-emerald-100 rounded-xl text-emerald-700">
-                <Bot className="w-5 h-5" />
+      <main className="plant-main" id="pdf-report-area">
+        <div key={currentPage} className="page-transition">
+          {currentPage === 1 && (
+            <section className="focus-layout scan-layout">
+              <div className="intro-copy"><span className="eyebrow">01 / {t.targetType}</span><h2>{t.scanTitle} <em>{t[scanType]}</em></h2><p>{t.scanSub}</p><div className="scan-orbit"><Leaf className={`w-12 h-12 ${isScanning ? 'animate-pulse' : ''}`} /><span>AI<br />VISION</span></div></div>
+              <div className="focus-panel">
+                {isCameraOpen ? <PlantScanner onCapture={(file) => { setIsCameraOpen(false); handleScan(file); }} onClose={() => setIsCameraOpen(false)} /> : <><div className="scan-icon"><ScanLine className={isScanning ? 'animate-pulse' : ''} /></div><h3>{isScanning ? t.scanning : 'Point your camera at a leaf'}</h3><p className="panel-copy">{t.scanSub}</p><input type="file" ref={fileInputRef} onChange={(e) => e.target.files[0] && handleScan(e.target.files[0])} accept="image/*" className="hidden" /><div className="action-row"><button onClick={() => setIsCameraOpen(true)} disabled={isScanning} className="primary-action"><Camera className="w-4 h-4" /> {t.openCamera}</button><button onClick={() => fileInputRef.current?.click()} disabled={isScanning} className="secondary-action"><Upload className="w-4 h-4" /> {t.chooseFile}</button></div></>}
               </div>
-              <h3 className="text-sm font-bold text-slate-900">{t.docHeader}</h3>
-            </div>
-            <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-100 min-h-[80px]">
-              {scanResult?.speechSummary || t.docPlaceholder}
-            </p>
-          </div>
-        </div>
-
-        {/* Right Section - Diagnostic Output */}
-        <div className="lg:col-span-7 flex flex-col gap-6">
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-1 bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-emerald-100 shadow-sm flex flex-col items-center justify-center text-center">
-              <div className="text-3xl font-black text-emerald-600">
-                {scanResult ? `${scanResult.healthScore}%` : '0%'}
-              </div>
-              <div className="text-xs font-bold text-slate-700 mt-2">
-                {scanResult ? scanResult.healthStatus : t.statusReady}
-              </div>
-            </div>
-
-            <div className="md:col-span-2 bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-emerald-100 shadow-sm flex flex-col justify-between">
-              <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-600">{t.speciesLabel}</span>
-                <h2 className="text-2xl font-black text-slate-900 mt-1">
-                  {scanResult?.plantName || t.noTargetScanned}
-                </h2>
-              </div>
-              
-              <div className="mt-4 flex items-center justify-between gap-2">
-                <button
-                  onClick={() => scanResult ? window.print() : alert(t.noData)}
-                  className="flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-colors shadow-sm"
-                >
-                  <Download className="w-3.5 h-3.5 text-emerald-400" />
-                  {t.downloadPdf}
-                </button>
-                {scanResult?.speechSummary && language && (
-                  <button
-                    onClick={() => playVoiceSummary(scanResult.speechSummary, language)}
-                    className="flex items-center gap-1 px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs font-bold border border-emerald-200 transition-colors"
-                  >
-                    <Volume2 className="w-3.5 h-3.5" />
-                    {t.listenSummary}
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Diagnosis Result Render */}
-          {scanResult && (
-            <DiagnosisResult 
-              diagnosisData={{
-                diseaseName: scanResult.diseaseName || scanResult.plantName,
-                description: scanResult.description || scanResult.speechSummary
-              }} 
-            />
+            </section>
           )}
 
-          {/* Treatment Cards Grid */}
-          <div className="flex flex-col gap-4">
-            <h3 className="text-sm font-bold text-slate-800">{t.treatmentTitle}</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {[
-                { label: t.water, icon: Droplet, val: scanResult?.careRequirements?.watering || scanResult?.treatmentCards?.watering, color: "text-blue-500 bg-blue-50" },
-                { label: t.organic, icon: Leaf, val: scanResult?.treatmentCards?.organicSolution, color: "text-emerald-500 bg-emerald-50" },
-                { label: t.chemical, icon: ShieldAlert, val: scanResult?.treatmentCards?.chemicalSpray, color: "text-amber-500 bg-amber-50" },
-                { label: t.prevention, icon: Sparkles, val: scanResult?.treatmentCards?.prevention, color: "text-purple-500 bg-purple-50" }
-              ].map((c, i) => (
-                <div key={i} className="bg-white/90 backdrop-blur-sm p-4 rounded-2xl border border-emerald-100 shadow-sm flex flex-col justify-between">
-                  <div className="flex items-center gap-2.5 mb-2">
-                    <div className={`p-2 rounded-xl ${c.color}`}>
-                      <c.icon className="w-4 h-4" />
-                    </div>
-                    <span className="text-xs font-bold text-slate-700">{c.label}</span>
-                  </div>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    {c.val || t.noData}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
+          {currentPage === 2 && (
+            <section className="focus-layout result-layout">
+              <div className="intro-copy"><span className="eyebrow">02 / {t.speciesLabel}</span><h2>{scanResult?.plantName || t.noTargetScanned}</h2><p>{scanResult?.description || t.scanSub}</p><button onClick={() => setCurrentPage(3)} className="next-action">View care plan <span>→</span></button></div>
+              <div className="result-visual"><div className="health-ring" style={{ '--health': `${scanResult?.healthScore || 0}%` }}><div><strong>{scanResult?.healthScore || 0}%</strong><span>{scanResult?.healthStatus || t.statusReady}</span></div></div><div className="result-stats"><div><small>{t.scans}</small><strong>{stats?.totalScans || 0}</strong></div><div><small>{t.accuracy}</small><strong>{stats?.accuracyRate || 96}%</strong></div></div><button onClick={() => scanResult ? window.print() : alert(t.noData)} className="download-action"><Download className="w-4 h-4" /> {t.downloadPdf}</button></div>
+            </section>
+          )}
 
+          {currentPage === 3 && (
+            <section className="care-layout"><div className="section-heading"><span className="eyebrow">03 / {t.treatmentTitle}</span><h2>{t.treatmentTitle}</h2><p>Practical next steps for a stronger, healthier plant.</p></div><div className="care-grid">{treatmentCards.map(({ label, icon: Icon, val, color }) => <article key={label} className="care-card"><div className={`care-icon ${color}`}><Icon className="w-5 h-5" /></div><h3>{label}</h3><p>{val || t.noData}</p></article>)}</div><div className="doctor-panel"><div className="doctor-heading"><div className="doctor-icon"><Bot className="w-5 h-5" /></div><div><span className="eyebrow">AI ASSISTANT</span><h3>{t.docHeader}</h3></div>{scanResult?.speechSummary && <button onClick={() => playVoiceSummary(scanResult.speechSummary, language)} className="listen-action"><Volume2 className="w-4 h-4" /> {t.listenSummary}</button>}</div><p>{scanResult?.speechSummary || t.docPlaceholder}</p></div></section>
+          )}
         </div>
-
       </main>
     </div>
   );
