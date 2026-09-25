@@ -298,33 +298,73 @@ export default function ExpoDashboard() {
     setIsScanning(false);
   }, []);
 
-  // Base64 JSON Vercel Backend Execution
+  // Updated Base64 JSON Vercel Backend Execution with Image Compression
   const executeScan = async (file, targetLang, targetType) => {
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     setIsScanning(true);
 
     try {
-      // Helper function to convert File/Blob to Base64
+      // Helper function to compress and convert File/Blob to Base64
       const convertBase64 = (fileData) => {
         return new Promise((resolve, reject) => {
-          const fileReader = new FileReader();
-          fileReader.readAsDataURL(fileData);
-          fileReader.onload = () => resolve(fileReader.result);
-          fileReader.onerror = (error) => reject(error);
+          const reader = new FileReader();
+             const loadImage = (dataUrl) => {
+               const img = new Image();
+               img.src = dataUrl;
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              const MAX_WIDTH = 800;
+              const MAX_HEIGHT = 800;
+              let width = img.width;
+              let height = img.height;
+
+              if (width > height) {
+                if (width > MAX_WIDTH) {
+                  height *= MAX_WIDTH / width;
+                  width = MAX_WIDTH;
+                }
+              } else {
+                if (height > MAX_HEIGHT) {
+                  width *= MAX_HEIGHT / height;
+                  height = MAX_HEIGHT;
+                }
+              }
+
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, width, height);
+              
+              // Compress to JPEG with 70% quality
+              resolve(canvas.toDataURL('image/jpeg', 0.7));
+            };
+            img.onerror = (error) => reject(error);
+          };
+             
+             if (typeof fileData === 'string') {
+               loadImage(fileData);
+               return;
+             }
+             
+             reader.onload = (event) => loadImage(event.target.result);
+             reader.onerror = (error) => reject(error);
+             reader.readAsDataURL(fileData);
         });
       };
 
       const base64Image = await convertBase64(file);
 
-      const API_URL = "https://dr-plant-ai-git-main-mirs2.vercel.app";
-      const response = await fetch(`${API_URL}/api/scan`, {
+      const API_URL = import.meta.env.VITE_API_URL ||
+        (window.location.hostname.includes('localhost') ? 'http://localhost:5000/api' : '/api');
+
+      const response = await fetch(`${API_URL}/scan`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           imageBase64: base64Image,
-          mimeType: file.type || 'image/jpeg',
+          mimeType: 'image/jpeg',
           language: targetLang || 'en',
           scanType: targetType || 'leaf'
         })
