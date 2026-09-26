@@ -32,6 +32,8 @@ const UI_TEXT = {
     scanning: "Analyzing Image...",
     docHeader: "AI Doctor Diagnostics",
     docPlaceholder: "Run a plant scan to hear the AI diagnosis and treatment summary read aloud...",
+    diagnosisTitle: "Plant Diagnosis",
+    diagnosisPlaceholder: "Your plant diagnosis will appear here after a scan.",
     speciesLabel: "Plant Species",
     noTargetScanned: "No Target Scanned",
     statusReady: "Ready",
@@ -67,6 +69,8 @@ const UI_TEXT = {
     scanning: "విశ్లేషిస్తోంది...",
     docHeader: "AI డాక్టర్ రోగనిర్ధారణ",
     docPlaceholder: "AI రోగనిర్ధారణ మరియు చికిత్స వినడానికి ఒక మొక్కను స్కాన్ చేయండి...",
+    diagnosisTitle: "మొక్క రోగ నిర్ధారణ",
+    diagnosisPlaceholder: "స్కాన్ చేసిన తర్వాత మొక్క రోగ నిర్ధారణ ఇక్కడ కనిపిస్తుంది.",
     speciesLabel: "మొక్క రకం / పేరు",
     noTargetScanned: "ఏదీ స్కాన్ చేయలేదు",
     statusReady: "సిద్ధంగా ఉంది",
@@ -102,6 +106,8 @@ const UI_TEXT = {
     scanning: "विश्लेषण हो रहा है...",
     docHeader: "AI डॉक्टर निदान",
     docPlaceholder: "AI निदान और उपचार सुनने के लिए पौधे का स्कैन चलाएं...",
+    diagnosisTitle: "पौधे का निदान",
+    diagnosisPlaceholder: "स्कैन के बाद पौधे का निदान यहां दिखाई देगा।",
     speciesLabel: "पौधे की प्रजाति",
     noTargetScanned: "कोई स्कैन नहीं हुआ",
     statusReady: "तैयार है",
@@ -137,6 +143,8 @@ const UI_TEXT = {
     scanning: "ஆராய்கிறது...",
     docHeader: "AI மருத்துவர் கண்டறிதல்",
     docPlaceholder: "AI நோய் கண்டறிதலைக் கேட்க தாவரத்தை ஸ்கேன் செய்யவும்...",
+    diagnosisTitle: "தாவர நோயறிதல்",
+    diagnosisPlaceholder: "ஸ்கேன் செய்த பிறகு தாவர நோயறிதல் இங்கே தோன்றும்.",
     speciesLabel: "தாவர வகை",
     noTargetScanned: "எதுவும் ஸ்கேன் செய்யப்படவில்லை",
     statusReady: "தயார்",
@@ -172,6 +180,8 @@ const UI_TEXT = {
     scanning: "ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ...",
     docHeader: "AI ವೈದ್ಯರ ರೋಗನಿರ್ಣಯ",
     docPlaceholder: "AI ವಿವರಣೆ ಕೇಳಲು ಸಸ್ಯವನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ...",
+    diagnosisTitle: "ಸಸ್ಯದ ರೋಗನಿರ್ಣಯ",
+    diagnosisPlaceholder: "ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ನಂತರ ಸಸ್ಯದ ರೋಗನಿರ್ಣಯ ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ.",
     speciesLabel: "ಸಸ್ಯದ ತಳಿ",
     noTargetScanned: "ಯಾವುದೇ ಸ್ಕ್ಯಾನ್ ಆಗಿಲ್ಲ",
     statusReady: "ಸಿದ್ಧವಾಗಿದೆ",
@@ -207,6 +217,8 @@ const UI_TEXT = {
     scanning: "വിശകലനം ചെയ്യുന്നു...",
     docHeader: "AI ഡാക്ടറുടെ രോഗനിർണ്ണയം",
     docPlaceholder: "AI ശബ്ദം കേൾക്കാൻ ചെടി സ്കാൻ ചെയ്യുക...",
+    diagnosisTitle: "ചെടിയുടെ രോഗനിർണ്ണയം",
+    diagnosisPlaceholder: "സ്കാൻ ചെയ്ത ശേഷം ചെടിയുടെ രോഗനിർണ്ണയം ഇവിടെ കാണാം.",
     speciesLabel: "ചെടിയുടെ ഇനം",
     noTargetScanned: "സ്കാൻ ചെയ്തിട്ടില്ല",
     statusReady: "തയ്യാറാണ്",
@@ -308,9 +320,10 @@ export default function ExpoDashboard() {
       const convertBase64 = (fileData) => {
         return new Promise((resolve, reject) => {
           const reader = new FileReader();
-             const loadImage = (dataUrl) => {
-               const img = new Image();
-               img.src = dataUrl;
+          reader.readAsDataURL(fileData);
+          reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
             img.onload = () => {
               const canvas = document.createElement('canvas');
               const MAX_WIDTH = 800;
@@ -340,24 +353,14 @@ export default function ExpoDashboard() {
             };
             img.onerror = (error) => reject(error);
           };
-             
-             if (typeof fileData === 'string') {
-               loadImage(fileData);
-               return;
-             }
-             
-             reader.onload = (event) => loadImage(event.target.result);
-             reader.onerror = (error) => reject(error);
-             reader.readAsDataURL(fileData);
+          reader.onerror = (error) => reject(error);
         });
       };
 
       const base64Image = await convertBase64(file);
 
-      const API_URL = import.meta.env.VITE_API_URL ||
-        (window.location.hostname.includes('localhost') ? 'http://localhost:5000/api' : '/api');
-
-      const response = await fetch(`${API_URL}/scan`, {
+      const API_URL = "https://dr-plant-ai-git-main-mirs2.vercel.app";
+      const response = await fetch(`${API_URL}/api/scan`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -486,10 +489,10 @@ export default function ExpoDashboard() {
       </div>
 
       {/* Main Container */}
-      <main className="flex-1 p-6 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6" id="pdf-report-area">
+      <main className="flex-1 p-6 max-w-5xl mx-auto w-full flex flex-col gap-6" id="pdf-report-area">
         
         {/* Left Section - Scanner Controls */}
-        <div className="lg:col-span-5 flex flex-col gap-6">
+        <div className="flex flex-col gap-6">
           <div className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-emerald-100 shadow-sm flex flex-col items-center justify-center text-center">
             
             {/* Embedded Live Scanner Component */}
@@ -549,7 +552,7 @@ export default function ExpoDashboard() {
         </div>
 
         {/* Right Section - Diagnostic Output */}
-        <div className="lg:col-span-7 flex flex-col gap-6">
+        <div className="flex flex-col gap-6">
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="md:col-span-1 bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-emerald-100 shadow-sm flex flex-col items-center justify-center text-center">
@@ -591,13 +594,18 @@ export default function ExpoDashboard() {
           </div>
 
           {/* Diagnosis Result Render */}
-          {scanResult && (
+          {scanResult ? (
             <DiagnosisResult 
               diagnosisData={{
                 diseaseName: scanResult.diseaseName || scanResult.plantName,
                 description: scanResult.description || scanResult.speechSummary
               }} 
             />
+          ) : (
+            <section className="bg-slate-900 p-4 rounded-xl text-white space-y-2">
+              <h3 className="text-lg font-bold text-emerald-400">{t.diagnosisTitle}</h3>
+              <p className="text-sm text-slate-300">{t.diagnosisPlaceholder}</p>
+            </section>
           )}
 
           {/* Treatment Cards Grid */}
