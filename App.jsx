@@ -15,32 +15,32 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50/80 via-teal-50/30 to-slate-100 text-slate-800 flex flex-col">
       
-      {/* Global Navigation Header with Larger Black School Name */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-emerald-100/80 px-2 sm:px-6 py-4 shadow-sm">
-        <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-1 sm:gap-4">
+      {/* Global Navigation Header with Reduced Banner Height */}
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-emerald-100 px-2 sm:px-4 py-2 shadow-sm">
+        <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-2 sm:gap-4">
           
           {/* Left Logo */}
-          <div className="flex items-center bg-white rounded-xl p-1 shadow-sm border border-emerald-100 flex-shrink-0">
+          <div className="flex items-center bg-white rounded-lg p-0.5 shadow-sm border border-emerald-100 flex-shrink-0">
             <img 
               src={logo1} 
               alt="Left School Logo" 
-              className="h-11 w-11 sm:h-20 sm:w-20 object-contain" 
+              className="h-8 w-8 sm:h-12 sm:w-12 object-contain" 
             />
           </div>
 
-          {/* School Name (Further increased font size) */}
+          {/* School Name */}
           <div className="text-center px-1 flex-1 overflow-hidden">
-            <h1 className="text-base sm:text-2xl md:text-3xl lg:text-4xl font-black tracking-wide text-black uppercase whitespace-nowrap">
+            <h1 className="text-xs sm:text-lg md:text-xl font-black tracking-wide text-black uppercase whitespace-nowrap">
               MONTESSORI INDUS RESIDENTIAL SCHOOL
             </h1>
           </div>
 
           {/* Right Logo */}
-          <div className="flex items-center rounded-xl overflow-hidden shadow-sm border border-emerald-100 flex-shrink-0">
+          <div className="flex items-center rounded-lg overflow-hidden shadow-sm border border-emerald-100 flex-shrink-0">
             <img 
               src={logo2} 
               alt="Right School Logo" 
-              className="h-11 w-11 sm:h-20 sm:w-20 object-cover" 
+              className="h-8 w-8 sm:h-12 sm:w-12 object-cover" 
             />
           </div>
 
