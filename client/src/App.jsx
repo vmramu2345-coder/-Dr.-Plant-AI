@@ -15,8 +15,8 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50/80 via-teal-50/30 to-slate-100 text-slate-800 flex flex-col">
       
-      {/* Global Navigation Header with Larger Black School Name */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-emerald-100/80 px-2 sm:px-6 py-4 shadow-sm">
+      {/* Global Navigation Header with Extra Large School Name */}
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-emerald-100/80 px-2 sm:px-6 py-3.5 shadow-sm">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-1 sm:gap-4">
           
           {/* Left Logo */}
@@ -24,13 +24,13 @@ export default function App() {
             <img 
               src={logo1} 
               alt="Left School Logo" 
-              className="h-11 w-11 sm:h-20 sm:w-20 object-contain" 
+              className="h-10 w-10 sm:h-16 sm:w-16 object-contain" 
             />
           </div>
 
           {/* School Name (Further increased font size) */}
           <div className="text-center px-1 flex-1 overflow-hidden">
-            <h1 className="text-base sm:text-2xl md:text-3xl lg:text-4xl font-black tracking-wide text-black uppercase whitespace-nowrap">
+            <h1 className="text-sm sm:text-xl md:text-2xl lg:text-3xl font-black text-emerald-900 tracking-tight sm:tracking-wide uppercase whitespace-nowrap">
               MONTESSORI INDUS RESIDENTIAL SCHOOL
             </h1>
           </div>
@@ -40,7 +40,7 @@ export default function App() {
             <img 
               src={logo2} 
               alt="Right School Logo" 
-              className="h-11 w-11 sm:h-20 sm:w-20 object-cover" 
+              className="h-10 w-10 sm:h-16 sm:w-16 object-cover" 
             />
           </div>
 
