@@ -152,7 +152,7 @@ export default function PlantScanner({ onCapture, onClose }) {
   };
 
   return (
-    <div className="plant-camera relative w-full max-w-2xl flex flex-col items-center bg-slate-900 p-4 rounded-xl text-white shadow-md">
+    <div className="relative w-full flex flex-col items-center bg-slate-900 p-4 rounded-xl text-white shadow-md">
       {/* Close Button */}
       <button
         onClick={handleClose}
@@ -192,7 +192,7 @@ export default function PlantScanner({ onCapture, onClose }) {
             autoPlay
             playsInline
             muted
-            className="camera-feed w-full min-h-[min(62vh,520px)] max-h-[520px] object-cover rounded-lg bg-black mb-3 border border-slate-800"
+            className="w-full h-64 object-cover rounded-lg bg-black mb-3 border border-slate-800"
           />
 
           {/* Camera Selection Dropdown for Multi-Camera Devices */}

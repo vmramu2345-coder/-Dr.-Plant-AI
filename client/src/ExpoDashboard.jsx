@@ -49,7 +49,7 @@ const UI_TEXT = {
   },
   te: {
     appName: "డాక్టర్ ప్లాంట్ AI",
-    badge: "ఎక్స్‌పో ప్రో",
+    badge: "ఎక్స్‌‌పో ప్రో",
     subTitle: "క్షణాల్లో AI రోగ నిర్ధారణ & బహుభాషా చికిత్స ప్రణాళిక",
     newScan: "కొత్త స్కాన్",
     none: "ఏదీ లేదు",
@@ -57,12 +57,12 @@ const UI_TEXT = {
     leaf: "ఆకు",
     plant: "మొక్క",
     tree: "చెట్టు",
-    scans: "మొత్తం స్కాన్‌లు",
+    scans: "మొత్తం స్కాన్‌‌లు",
     healthy: "ఆరోగ్యకరమైనవి",
     diseased: "వ్యాధిగ్రస్తులు",
     accuracy: "ఖచ్చితత్వ రేటు",
     scanTitle: "స్కాన్ చేయడానికి సిద్ధంగా ఉంది",
-    scanSub: "లైవ్ కెమెరా తెరిచి లేదా ఫోటోను అప్‌లోడ్ చేసి స్కాన్ చేయండి",
+    scanSub: "లైవ్ కెమెరా తెరిచి లేదా ఫోటోను అప్‌‌లోడ్ చేసి స్కాన్ చేయండి",
     openCamera: "కెమెరా తెరవండి",
     captureBtn: "ఫోటో తీసి విశ్లేషించండి",
     chooseFile: "ఫైల్‌ని ఎంచుకోండి",
@@ -210,7 +210,7 @@ const UI_TEXT = {
     diseased: "രോഗബാധിതമായവ",
     accuracy: "കൃത്യത നിരക്ക്",
     scanTitle: "സ്കാൻ ചെയ്യാൻ തയ്യാറാണ്",
-    scanSub: "ലൈവ് ക്യാമറ തുറക്കുക അല്ലെങ്കിൽ ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യുക",
+    scanSub: "ലൈവ് ക്യാമറ തുറക്കുക അല്ലെങ്കിൽ ഫോട്ടോ അപ്‌‌ലോഡ് ചെയ്യുക",
     openCamera: "ക്യാമറ തുറക്കുക",
     captureBtn: "ഫോട്ടോ എടുത്തു വിശകലനം ചെയ്യുക",
     chooseFile: "ഫയൽ തിരഞ്ഞെടുക്കുക",
@@ -234,7 +234,6 @@ const UI_TEXT = {
   }
 };
 
-// Web Speech Synthesis Audio Player
 const playVoiceSummary = (speechSummary, languageCode = 'en') => {
   if (!('speechSynthesis' in window)) return;
 
@@ -310,13 +309,11 @@ export default function ExpoDashboard() {
     setIsScanning(false);
   }, []);
 
-  // Updated Base64 JSON Vercel Backend Execution with Image Compression
   const executeScan = async (file, targetLang, targetType) => {
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     setIsScanning(true);
 
     try {
-      // Helper function to compress and convert File/Blob to Base64
       const convertBase64 = (fileData) => {
         return new Promise((resolve, reject) => {
           const reader = new FileReader();
@@ -348,7 +345,6 @@ export default function ExpoDashboard() {
               const ctx = canvas.getContext('2d');
               ctx.drawImage(img, 0, 0, width, height);
               
-              // Compress to JPEG with 70% quality
               resolve(canvas.toDataURL('image/jpeg', 0.7));
             };
             img.onerror = (error) => reject(error);
@@ -408,9 +404,10 @@ export default function ExpoDashboard() {
             <Bot className="w-7 h-7 text-emerald-700" />
           </div>
           <div>
-            <h1 className="text-xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
-              {t.appName} <span className="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full border border-emerald-300 font-bold">{t.badge}</span>
-            </h1>
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-extrabold tracking-tight text-slate-900">{t.appName}</h1>
+              <span className="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full border border-emerald-300 font-bold">{t.badge}</span>
+            </div>
             <p className="text-xs text-slate-500 font-medium">{t.subTitle}</p>
           </div>
         </div>
