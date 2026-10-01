@@ -15,7 +15,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50/80 via-teal-50/30 to-slate-100 text-slate-800 flex flex-col">
       
-      {/* Global Navigation Header with Ultra-Slim Banner & Light Green School Name */}
+      {/* Global Navigation Header with Ultra-Slim Banner & Black Bold School Name */}
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-emerald-100 px-2 sm:px-4 py-1 shadow-sm">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-2 sm:gap-4">
           
@@ -28,9 +28,9 @@ export default function App() {
             />
           </div>
 
-          {/* School Name (Light Green, Bold, Slim Banner) */}
+          {/* School Name (Pure Black, Bold, Slim Banner) */}
           <div className="text-center px-1 flex-1 overflow-hidden">
-            <h1 className="text-xs sm:text-xl md:text-2xl font-black tracking-wide text-emerald-500 uppercase whitespace-nowrap">
+            <h1 className="text-xs sm:text-xl md:text-2xl font-black tracking-wide text-black uppercase whitespace-nowrap">
               MONTESSORI INDUS RESIDENTIAL SCHOOL
             </h1>
           </div>
