@@ -28,9 +28,9 @@ export default function App() {
             />
           </div>
 
-          {/* School Name Only on Green Background */}
-          <div className="text-center px-2 py-1 bg-emerald-600 rounded-lg shadow-sm flex-1 overflow-hidden mx-1">
-            <h1 className="text-xs sm:text-xl md:text-2xl font-black tracking-wide text-white uppercase whitespace-nowrap">
+          {/* School Name with Expo Pro Badge/Pill Background Style */}
+          <div className="text-center px-3 py-1 bg-emerald-100 border border-emerald-300 rounded-full shadow-xs flex-1 overflow-hidden mx-1">
+            <h1 className="text-xs sm:text-xl md:text-2xl font-black tracking-wide text-emerald-900 uppercase whitespace-nowrap">
               MONTESSORI INDUS RESIDENTIAL SCHOOL
             </h1>
           </div>
