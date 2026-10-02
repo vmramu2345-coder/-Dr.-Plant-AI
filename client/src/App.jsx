@@ -15,12 +15,12 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50/80 via-teal-50/30 to-slate-100 text-slate-800 flex flex-col">
       
-      {/* Global Navigation Header with Ultra-Slim Banner & Black Bold School Name */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-emerald-100 px-2 sm:px-4 py-1 shadow-sm">
+      {/* Global Navigation Header: Green Background with White Bold School Name */}
+      <header className="sticky top-0 z-50 bg-emerald-600 shadow-md border-b border-emerald-700 px-2 sm:px-4 py-1.5">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-2 sm:gap-4">
           
           {/* Left Logo */}
-          <div className="flex items-center bg-white rounded-md p-0.5 shadow-sm border border-emerald-100 flex-shrink-0">
+          <div className="flex items-center bg-white rounded-md p-0.5 shadow-sm border border-emerald-500 flex-shrink-0">
             <img 
               src={logo1} 
               alt="Left School Logo" 
@@ -28,15 +28,15 @@ export default function App() {
             />
           </div>
 
-          {/* School Name (Pure Black, Bold, Slim Banner) */}
+          {/* School Name (White Bold Text on Green Background) */}
           <div className="text-center px-1 flex-1 overflow-hidden">
-            <h1 className="text-xs sm:text-xl md:text-2xl font-black tracking-wide text-black uppercase whitespace-nowrap">
+            <h1 className="text-xs sm:text-xl md:text-2xl font-black tracking-wide text-white uppercase whitespace-nowrap">
               MONTESSORI INDUS RESIDENTIAL SCHOOL
             </h1>
           </div>
 
           {/* Right Logo */}
-          <div className="flex items-center rounded-md overflow-hidden shadow-sm border border-emerald-100 flex-shrink-0">
+          <div className="flex items-center rounded-md overflow-hidden shadow-sm border border-emerald-500 flex-shrink-0">
             <img 
               src={logo2} 
               alt="Right School Logo" 
