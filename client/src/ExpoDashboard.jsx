@@ -4,7 +4,8 @@ import {
   CheckCircle, AlertTriangle, Target, Droplet, Leaf, ShieldAlert, 
   Sparkles, Download, Camera 
 } from 'lucide-react';
-import { fetchExpoStats } from './services/api';
+import html2pdf from 'html2pdf.js';
+import { fetchExpoStats, scanPlantImage } from './services/api';
 import PlantScanner from './components/PlantScanner';
 import DiagnosisResult from './components/DiagnosisResult';
 
@@ -338,7 +339,7 @@ export default function ExpoDashboard() {
               canvas.height = height;
               const ctx = canvas.getContext('2d');
               ctx.drawImage(img, 0, 0, width, height);
-              
+
               resolve(canvas.toDataURL('image/jpeg', 0.7));
             };
             img.onerror = (error) => reject(error);
@@ -348,22 +349,12 @@ export default function ExpoDashboard() {
       };
 
       const base64Image = await convertBase64(file);
-
-      const API_URL = "https://dr-plant-ai-git-main-mirs2.vercel.app";
-      const response = await fetch(`${API_URL}/api/scan`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          imageBase64: base64Image,
-          mimeType: 'image/jpeg',
-          language: targetLang || 'en',
-          scanType: targetType || 'leaf'
-        })
+      const res = await scanPlantImage({
+        imageBase64: base64Image,
+        mimeType: 'image/jpeg',
+        language: targetLang || 'en',
+        scanType: targetType || 'leaf'
       });
-
-      const res = await response.json();
 
       if (res?.success) {
         setScanResult(res.data);
@@ -372,11 +363,11 @@ export default function ExpoDashboard() {
           playVoiceSummary(res.data.speechSummary, targetLang);
         }
       } else {
-        alert(`Scan failed: ${res?.error || "Please upload a clearer image."}`);
+        alert(`Scan failed: ${res?.error || 'Please upload a clearer image.'}`);
       }
     } catch (err) {
       console.error('Scan Error Payload:', err);
-      alert('Backend Error: Network Error');
+      alert(`Backend Error: ${err.message || 'Network Error'}`);
     } finally {
       setIsScanning(false);
     }
@@ -386,6 +377,24 @@ export default function ExpoDashboard() {
     if (isScanning) return;
     setCurrentFile(file);
     await executeScan(file, language, scanType);
+  };
+
+  const handleDownloadPdf = () => {
+    const reportElement = document.getElementById('diagnostic-report-card');
+    if (!reportElement || !scanResult) {
+      alert(t.noData);
+      return;
+    }
+
+    const opt = {
+      margin: 0.5,
+      filename: `DrPlantAI_Report_${Date.now()}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(reportElement).save();
   };
 
   return (
@@ -559,7 +568,7 @@ export default function ExpoDashboard() {
               </div>
             </div>
 
-            <div className="md:col-span-2 bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-emerald-100 shadow-sm flex flex-col justify-between">
+            <div id="diagnostic-report-card" className="md:col-span-2 bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-emerald-100 shadow-sm flex flex-col justify-between">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-emerald-600">{t.speciesLabel}</span>
                 <h2 className="text-2xl font-black text-slate-900 mt-1">
@@ -569,7 +578,7 @@ export default function ExpoDashboard() {
               
               <div className="mt-4 flex items-center justify-between gap-2">
                 <button
-                  onClick={() => scanResult ? window.print() : alert(t.noData)}
+                  onClick={handleDownloadPdf}
                   className="flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-colors shadow-sm"
                 >
                   <Download className="w-3.5 h-3.5 text-emerald-400" />
