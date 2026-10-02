@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
-  Leaf, Globe, RotateCcw, Volume2, Upload, ScanLine, Activity, 
-  CheckCircle, AlertTriangle, Target, Droplet, ShieldAlert, 
-  Sparkles, Download, Camera, Bot 
+  Sprout, Globe, RotateCcw, Volume2, Upload, ScanLine, Activity, 
+  CheckCircle, AlertTriangle, Target, Droplet, Leaf, ShieldAlert, 
+  Sparkles, Download, Camera 
 } from 'lucide-react';
 import { fetchExpoStats } from './services/api';
 import PlantScanner from './components/PlantScanner';
@@ -55,12 +55,12 @@ const UI_TEXT = {
     leaf: "ఆకు",
     plant: "మొక్క",
     tree: "చెట్టు",
-    scans: "మొత్తం స్కాన్‌‌‌లు",
+    scans: "మొత్తం స్కాన్లు",
     healthy: "ఆరోగ్యకరమైనవి",
     diseased: "వ్యాధిగ్రస్తులు",
     accuracy: "ఖచ్చితత్వ రేటు",
     scanTitle: "స్కాన్ చేయడానికి సిద్ధంగా ఉంది",
-    scanSub: "లైవ్ కెమెరా తెరిచి లేదా ఫోటోను అప్‌‌లోడ్ చేసి స్కాన్ చేయండి",
+    scanSub: "లైవ్ కెమెరా తెరిచి లేదా ఫోటోను అప్‌‌‌లోడ్ చేసి స్కాన్ చేయండి",
     openCamera: "కెమెరా తెరవండి",
     captureBtn: "ఫోటో తీసి విశ్లేషించండి",
     chooseFile: "ఫైల్‌ని ఎంచుకోండి",
@@ -204,7 +204,7 @@ const UI_TEXT = {
     diseased: "രോഗബാധിതമായവ",
     accuracy: "കൃത്യത നിരക്ക്",
     scanTitle: "സ്കാൻ ചെയ്യാൻ തയ്യാറാണ്",
-    scanSub: "ലൈവ് ക്യാമറ തുറക്കുക അല്ലെങ്കിൽ ഫോട്ടോ അപ്‌‌‌‌ലോഡ് ചെയ്യുക",
+    scanSub: "ലൈവ് ക്യാമറ തുറക്കുക അല്ലെങ്കിൽ ഫോട്ടോ അപ്‌‌ലോഡ് ചെയ്യുക",
     openCamera: "ക്യാമറ തുറക്കുക",
     captureBtn: "ഫോട്ടോ എടുത്തു വിശകലനം ചെയ്യുക",
     chooseFile: "ഫയൽ തിരഞ്ഞെടുക്കുക",
@@ -391,21 +391,18 @@ export default function ExpoDashboard() {
   return (
     <div className="space-y-6">
       
-      {/* Dashboard Top Header Section with Transparent Leaf Icon */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-sm border border-emerald-100">
+      {/* Dashboard Top Header Section with Centered Plant Image and Title */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-sm border border-emerald-100">
         
-        <div className="flex items-center gap-3">
-          {/* Green Leaf Icon with no background block */}
-          <div className="flex items-center justify-center">
-            <Leaf className="w-7 h-7 text-emerald-600" />
+        {/* Centered Brand Title with Attractive Green Plant Sprout Icon */}
+        <div className="flex items-center justify-center gap-2.5 mx-auto md:mx-0">
+          <div className="p-2 bg-emerald-100 rounded-xl flex items-center justify-center shadow-inner">
+            <Sprout className="w-6 h-6 text-emerald-600 animate-pulse" />
           </div>
-
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                {t.appName}
-              </h2>
-            </div>
+          <div className="text-center md:text-left">
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+              {t.appName}
+            </h2>
             <p className="text-xs sm:text-sm text-slate-500 font-medium">
               {t.subTitle}
             </p>
@@ -413,7 +410,7 @@ export default function ExpoDashboard() {
         </div>
 
         {/* Action Controls: New Scan, Target Toggle & Multilingual Selector */}
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-3 flex-wrap justify-center">
           {scanResult && (
             <button
               onClick={handleResetScan}
@@ -539,7 +536,7 @@ export default function ExpoDashboard() {
           <div className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-emerald-100 shadow-sm">
             <div className="flex items-center gap-3 mb-3">
               <div className="p-2 bg-emerald-100 rounded-xl text-emerald-700">
-                <Leaf className="w-5 h-5" />
+                <Sprout className="w-5 h-5" />
               </div>
               <h3 className="text-sm font-bold text-slate-900">{t.docHeader}</h3>
             </div>
