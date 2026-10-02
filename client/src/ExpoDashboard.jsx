@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
-  Bot, Globe, RotateCcw, Volume2, Upload, ScanLine, Activity, 
+  Sprout, Globe, RotateCcw, Volume2, Upload, ScanLine, Activity, 
   CheckCircle, AlertTriangle, Target, Droplet, Leaf, ShieldAlert, 
   Sparkles, Download, Camera 
 } from 'lucide-react';
@@ -12,7 +12,6 @@ import DiagnosisResult from './components/DiagnosisResult';
 const UI_TEXT = {
   en: {
     appName: "Dr. Plant AI",
-    badge: "Expo Pro",
     subTitle: "Instant AI Diagnostics & Multilingual Treatment Plan",
     newScan: "New Scan",
     none: "None",
@@ -49,7 +48,6 @@ const UI_TEXT = {
   },
   te: {
     appName: "డాక్టర్ ప్లాంట్ AI",
-    badge: "ఎక్స్‌‌పో ప్రో",
     subTitle: "క్షణాల్లో AI రోగ నిర్ధారణ & బహుభాషా చికిత్స ప్రణాళిక",
     newScan: "కొత్త స్కాన్",
     none: "ఏదీ లేదు",
@@ -86,7 +84,6 @@ const UI_TEXT = {
   },
   hi: {
     appName: "डॉ. प्लांट AI",
-    badge: "एक्सपो प्रो",
     subTitle: "तत्काल AI निदान और बहुभाषी उपचार योजना",
     newScan: "नया स्कैन",
     none: "कोई नहीं",
@@ -123,7 +120,6 @@ const UI_TEXT = {
   },
   ta: {
     appName: "டாக்டர் பிளான்ட் AI",
-    badge: "எக்ஸ்போ புரோ",
     subTitle: "உடனடி AI நோய் கண்டறிதல் மற்றும் பலமொழி சிகிச்சை திட்டம்",
     newScan: "புதிய ஸ்கேன்",
     none: "எதுவுமில்லை",
@@ -160,7 +156,6 @@ const UI_TEXT = {
   },
   kn: {
     appName: "ಡಾ. ಪ್ಲಾಂಟ್ AI",
-    badge: "ಎಕ್ಸ್‌ಪೋ ಪ್ರೊ",
     subTitle: "ತಕ್ಷಣದ AI ರೋಗನಿರ್ಣಯ ಮತ್ತು ಬಹುಭಾಷಾ ಚಿಕಿತ್ಸಾ ಯೋಜನೆ",
     newScan: "ಹೊಸ ಸ್ಕ್ಯಾನ್",
     none: "ಯಾವುದೂ ಇಲ್ಲ",
@@ -197,7 +192,6 @@ const UI_TEXT = {
   },
   ml: {
     appName: "ഡോ. പ്ലാന്റ് AI",
-    badge: "എക്സ്പോ പ്രോ",
     subTitle: "തൽക്ഷണ AI രോഗനിർണ്ണയവും ചികിത്സാ പദ്ധതിയും",
     newScan: "പുതിയ സ്കാൻ",
     none: "ഒന്നുമില്ല",
@@ -395,24 +389,30 @@ export default function ExpoDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50/80 via-teal-50/30 to-slate-100 text-slate-800 flex flex-col font-sans">
+    <div className="space-y-6">
       
-      {/* Header Bar */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-emerald-100/80 px-6 py-4 flex flex-wrap items-center justify-between gap-4 shadow-sm">
+      {/* Dashboard Top Header Section with Sprout Icon & Clean Dr. Plant AI branding */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-sm border border-emerald-100">
+        
         <div className="flex items-center gap-3">
-          <div className="p-2.5 bg-emerald-100/80 border border-emerald-200 rounded-xl shadow-inner">
-            <Bot className="w-7 h-7 text-emerald-700" />
+          {/* Plant Icon representing the app theme */}
+          <div className="p-2.5 bg-emerald-600 rounded-xl text-white shadow-sm flex items-center justify-center">
+            <Sprout className="w-6 h-6" />
           </div>
+
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-extrabold tracking-tight text-slate-900">{t.appName}</h1>
-              <span className="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full border border-emerald-300 font-bold">{t.badge}</span>
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                {t.appName}
+              </h2>
             </div>
-            <p className="text-xs text-slate-500 font-medium">{t.subTitle}</p>
+            <p className="text-xs sm:text-sm text-slate-500 font-medium">
+              {t.subTitle}
+            </p>
           </div>
         </div>
 
-        {/* Action Controls */}
+        {/* Action Controls: New Scan, Target Toggle & Multilingual Selector */}
         <div className="flex items-center gap-3 flex-wrap">
           {scanResult && (
             <button
@@ -457,10 +457,11 @@ export default function ExpoDashboard() {
             </select>
           </div>
         </div>
-      </header>
+
+      </div>
 
       {/* Stats Metric Bar */}
-      <div className="bg-white/60 backdrop-blur-md border-b border-emerald-100 px-6 py-3">
+      <div className="bg-white/60 backdrop-blur-md border border-emerald-100 px-6 py-3 rounded-2xl shadow-sm">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
           <div className="flex items-center justify-center gap-2">
             <Activity className="w-4 h-4 text-emerald-600" />
@@ -485,10 +486,10 @@ export default function ExpoDashboard() {
         </div>
       </div>
 
-      {/* Main Container */}
-      <main className="flex-1 p-6 max-w-5xl mx-auto w-full flex flex-col gap-6" id="pdf-report-area">
+      {/* Main Container Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6" id="pdf-report-area">
         
-        {/* Left Section - Scanner Controls */}
+        {/* Left Section - Scanner Controls & Speech Summary */}
         <div className="flex flex-col gap-6">
           <div className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-emerald-100 shadow-sm flex flex-col items-center justify-center text-center">
             
@@ -538,7 +539,7 @@ export default function ExpoDashboard() {
           <div className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-emerald-100 shadow-sm">
             <div className="flex items-center gap-3 mb-3">
               <div className="p-2 bg-emerald-100 rounded-xl text-emerald-700">
-                <Bot className="w-5 h-5" />
+                <Sprout className="w-5 h-5" />
               </div>
               <h3 className="text-sm font-bold text-slate-900">{t.docHeader}</h3>
             </div>
@@ -548,7 +549,7 @@ export default function ExpoDashboard() {
           </div>
         </div>
 
-        {/* Right Section - Diagnostic Output */}
+        {/* Right Section - Diagnostic Output & Treatment Cards */}
         <div className="flex flex-col gap-6">
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -632,7 +633,7 @@ export default function ExpoDashboard() {
 
         </div>
 
-      </main>
+      </div>
     </div>
   );
 }
