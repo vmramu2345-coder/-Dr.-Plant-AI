@@ -1,12 +1,13 @@
 import axios from 'axios';
 
-// Automatically detect API base URL
+// Automatically detect API base URL (Prioritizes Vercel environment variable, then falls back to Render)
 const getApiBaseUrl = () => {
-  // If running locally, point to local server
+  if (import.meta.env.VITE_API_URL) {
+    return `${import.meta.env.VITE_API_URL}/api`;
+  }
   if (window.location.hostname.includes('localhost')) {
     return 'http://localhost:5000/api';
   }
-  // Use Render directly in production so stale Vercel environment overrides cannot redirect API calls.
   return 'https://dr-plant-ai.onrender.com/api';
 };
 
@@ -15,7 +16,7 @@ console.log('🔗 Active API Base URL:', API_BASE_URL);
 
 const API = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 60000, // 60-second timeout
+  timeout: 60000, // 60-second timeout for AI processing
   headers: {
     'Content-Type': 'application/json',
   },
