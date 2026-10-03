@@ -4,7 +4,7 @@ import {
   CheckCircle, AlertTriangle, Target, Droplet, Leaf, ShieldAlert, 
   Sparkles, Download, Camera 
 } from 'lucide-react';
-import { fetchExpoStats } from './services/api';
+import { API_BASE_URL, fetchExpoStats } from './services/api';
 import PlantScanner from './components/PlantScanner';
 import DiagnosisResult from './components/DiagnosisResult';
 
@@ -347,9 +347,7 @@ export default function ExpoDashboard() {
 
       const base64Image = await convertBase64(file);
 
-      const API_URL = import.meta.env.VITE_API_URL ||
-        (window.location.hostname.includes('localhost') ? 'http://localhost:5000/api' : '/api');
-      const response = await fetch(`${API_URL}/scan`, {
+      const response = await fetch(`${API_BASE_URL}/scan`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
