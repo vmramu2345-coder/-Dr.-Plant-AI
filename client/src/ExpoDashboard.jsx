@@ -400,77 +400,80 @@ export default function ExpoDashboard() {
     <div className="min-h-screen bg-gradient-to-b from-emerald-50/80 via-teal-50/30 to-slate-100 text-slate-800 flex flex-col font-sans">
       
       {/* Header Bar */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-emerald-100/80 px-6 py-4 flex flex-wrap items-center justify-between gap-4 shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 bg-emerald-100/80 border border-emerald-200 rounded-xl shadow-inner">
-            <Bot className="w-7 h-7 text-emerald-700" />
-          </div>
-          <div>
-            <div className="mb-1 flex items-center gap-2">
-              <img
-                src={schoolLogoLeft}
-                alt="First Among Equals school logo"
-                className="h-10 w-10 rounded-lg object-contain"
-              />
-              <span className="text-sm font-extrabold tracking-wide text-center text-slate-800">
-                MONTESSORI INDUS RESIDENTIAL SCHOOL
-              </span>
-              <img
-                src={schoolLogoRight}
-                alt="Montessori Golden Jubilee school logo"
-                className="h-10 w-10 rounded-lg object-contain"
-              />
-            </div>
-            <h1 className="text-xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
-              {t.appName} <span className="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full border border-emerald-300 font-bold">{t.badge}</span>
-            </h1>
-            <p className="text-xs text-slate-500 font-medium">{t.subTitle}</p>
-          </div>
+      <header className="bg-white/80 backdrop-blur-md border-b border-emerald-100/80 px-6 py-4 shadow-sm">
+        <div className="mx-auto mb-4 flex max-w-3xl items-center justify-center gap-3">
+          <img
+            src={schoolLogoLeft}
+            alt="First Among Equals school logo"
+            className="h-10 w-10 rounded-lg object-contain sm:h-12 sm:w-12"
+          />
+          <h2 className="text-center text-sm font-extrabold tracking-wide text-slate-800 sm:text-lg">
+            MONTESSORI INDUS RESIDENTIAL SCHOOL
+          </h2>
+          <img
+            src={schoolLogoRight}
+            alt="Montessori Golden Jubilee school logo"
+            className="h-10 w-10 rounded-lg object-contain sm:h-12 sm:w-12"
+          />
         </div>
 
-        {/* Action Controls */}
-        <div className="flex items-center gap-3 flex-wrap">
-          {scanResult && (
-            <button
-              onClick={handleResetScan}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-600 hover:text-emerald-700 bg-slate-100 hover:bg-emerald-50 rounded-xl border border-slate-200 transition-colors"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              {t.newScan}
-            </button>
-          )}
-
-          {/* Target Type Toggle */}
-          <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
-            {['leaf', 'plant', 'tree'].map((type) => (
-              <button
-                key={type}
-                onClick={() => handleScanTypeChange(type)}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${
-                  scanType === type ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                {t[type]}
-              </button>
-            ))}
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-emerald-100/80 border border-emerald-200 rounded-xl shadow-inner">
+              <Bot className="w-7 h-7 text-emerald-700" />
+            </div>
+            <div>
+              <h1 className="text-xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
+                {t.appName} <span className="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full border border-emerald-300 font-bold">{t.badge}</span>
+              </h1>
+              <p className="text-xs text-slate-500 font-medium">{t.subTitle}</p>
+            </div>
           </div>
 
-          {/* Multilingual Selector */}
-          <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200 shadow-inner">
-            <Globe className="w-4 h-4 text-emerald-600 ml-2" />
-            <select 
-              value={language}
-              onChange={handleLanguageChange}
-              className="bg-transparent text-slate-700 text-xs font-bold pr-3 py-1 rounded-lg border-none focus:ring-0 cursor-pointer outline-none"
-            >
-              <option value="">{t.none}</option>
-              <option value="en">English (English)</option>
-              <option value="te">తెలుగు (Telugu)</option>
-              <option value="hi">हिंदी (Hindi)</option>
-              <option value="ta">தமிழ் (Tamil)</option>
-              <option value="kn">ಕನ್ನಡ (Kannada)</option>
-              <option value="ml">മലയാളം (Malayalam)</option>
-            </select>
+          {/* Action Controls */}
+          <div className="flex items-center gap-3 flex-wrap">
+            {scanResult && (
+              <button
+                onClick={handleResetScan}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-600 hover:text-emerald-700 bg-slate-100 hover:bg-emerald-50 rounded-xl border border-slate-200 transition-colors"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                {t.newScan}
+              </button>
+            )}
+
+            {/* Target Type Toggle */}
+            <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+              {['leaf', 'plant', 'tree'].map((type) => (
+                <button
+                  key={type}
+                  onClick={() => handleScanTypeChange(type)}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${
+                    scanType === type ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  {t[type]}
+                </button>
+              ))}
+            </div>
+
+            {/* Multilingual Selector */}
+            <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200 shadow-inner">
+              <Globe className="w-4 h-4 text-emerald-600 ml-2" />
+              <select 
+                value={language}
+                onChange={handleLanguageChange}
+                className="bg-transparent text-slate-700 text-xs font-bold pr-3 py-1 rounded-lg border-none focus:ring-0 cursor-pointer outline-none"
+              >
+                <option value="">{t.none}</option>
+                <option value="en">English (English)</option>
+                <option value="te">తెలుగు (Telugu)</option>
+                <option value="hi">हिंदी (Hindi)</option>
+                <option value="ta">தமிழ் (Tamil)</option>
+                <option value="kn">ಕನ್ನಡ (Kannada)</option>
+                <option value="ml">മലയാളം (Malayalam)</option>
+              </select>
+            </div>
           </div>
         </div>
       </header>
