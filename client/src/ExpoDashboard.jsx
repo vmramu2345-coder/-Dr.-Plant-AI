@@ -4,6 +4,8 @@ import {
   CheckCircle, AlertTriangle, Target, Droplet, Leaf, ShieldAlert, 
   Sparkles, Download, Camera 
 } from 'lucide-react';
+import schoolLogoLeft from './assets/logo1.jpeg';
+import schoolLogoRight from './assets/logo2.jpg';
 import { API_BASE_URL, fetchExpoStats } from './services/api';
 import PlantScanner from './components/PlantScanner';
 import DiagnosisResult from './components/DiagnosisResult';
@@ -404,6 +406,21 @@ export default function ExpoDashboard() {
             <Bot className="w-7 h-7 text-emerald-700" />
           </div>
           <div>
+            <div className="mb-1 flex items-center gap-2">
+              <img
+                src={schoolLogoLeft}
+                alt="First Among Equals school logo"
+                className="h-10 w-10 rounded-lg object-contain"
+              />
+              <span className="text-sm font-extrabold tracking-wide text-center text-slate-800">
+                MONTESSORI INDUS RESIDENTIAL SCHOOL
+              </span>
+              <img
+                src={schoolLogoRight}
+                alt="Montessori Golden Jubilee school logo"
+                className="h-10 w-10 rounded-lg object-contain"
+              />
+            </div>
             <h1 className="text-xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
               {t.appName} <span className="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full border border-emerald-300 font-bold">{t.badge}</span>
             </h1>
