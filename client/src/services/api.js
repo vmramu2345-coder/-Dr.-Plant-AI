@@ -6,11 +6,11 @@ const getApiBaseUrl = () => {
   if (window.location.hostname.includes('localhost')) {
     return 'http://localhost:5000/api';
   }
-  // On Vercel, use the environment variable or fallback to relative path for serverless rewrites
-  return import.meta.env.VITE_API_URL || '/api';
+  // Production frontend requests go directly to the Render API, avoiding Vercel API rewrites.
+  return import.meta.env.VITE_API_URL || 'https://dr-plant-ai.onrender.com/api';
 };
 
-const API_BASE_URL = getApiBaseUrl();
+export const API_BASE_URL = getApiBaseUrl();
 console.log('🔗 Active API Base URL:', API_BASE_URL);
 
 const API = axios.create({
