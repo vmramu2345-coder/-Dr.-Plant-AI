@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
-  Bot, Globe, RotateCcw, Volume2, Upload, ScanLine, Activity, 
+  Globe, RotateCcw, Volume2, Upload, ScanLine, Activity, 
   CheckCircle, AlertTriangle, Target, Droplet, Leaf, ShieldAlert, 
   Sparkles, Download, Camera 
 } from 'lucide-react';
@@ -420,7 +420,7 @@ export default function ExpoDashboard() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="p-2.5 bg-emerald-100/80 border border-emerald-200 rounded-xl shadow-inner">
-              <Bot className="w-7 h-7 text-emerald-700" />
+              <span className="text-2xl" role="img" aria-label="Leaf">🌿</span>
             </div>
             <div>
               <h1 className="text-xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
