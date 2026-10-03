@@ -373,7 +373,8 @@ export default function ExpoDashboard() {
       }
     } catch (err) {
       console.error('Scan Error Payload:', err);
-      alert('Backend Error: Network Error');
+      const message = err instanceof Error ? err.message : String(err);
+      alert(`Backend Error: ${message}`);
     } finally {
       setIsScanning(false);
     }
