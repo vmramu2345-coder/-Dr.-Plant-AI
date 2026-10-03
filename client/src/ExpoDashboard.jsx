@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
-  Globe, RotateCcw, Volume2, Upload, ScanLine, Activity, 
+  Bot, Globe, RotateCcw, Volume2, Upload, ScanLine, Activity, 
   CheckCircle, AlertTriangle, Target, Droplet, Leaf, ShieldAlert, 
   Sparkles, Download, Camera 
 } from 'lucide-react';
