@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
-  Sprout, Globe, RotateCcw, Volume2, Upload, ScanLine, Activity, 
+  Bot, Globe, RotateCcw, Volume2, Upload, ScanLine, Activity, 
   CheckCircle, AlertTriangle, Target, Droplet, Leaf, ShieldAlert, 
   Sparkles, Download, Camera 
 } from 'lucide-react';
-import html2pdf from 'html2pdf.js';
-import { fetchExpoStats, scanPlantImage } from './services/api';
+import { fetchExpoStats } from './services/api';
 import PlantScanner from './components/PlantScanner';
 import DiagnosisResult from './components/DiagnosisResult';
 
@@ -13,6 +12,7 @@ import DiagnosisResult from './components/DiagnosisResult';
 const UI_TEXT = {
   en: {
     appName: "Dr. Plant AI",
+    badge: "Expo Pro",
     subTitle: "Instant AI Diagnostics & Multilingual Treatment Plan",
     newScan: "New Scan",
     none: "None",
@@ -32,8 +32,6 @@ const UI_TEXT = {
     scanning: "Analyzing Image...",
     docHeader: "AI Doctor Diagnostics",
     docPlaceholder: "Run a plant scan to hear the AI diagnosis and treatment summary read aloud...",
-    diagnosisTitle: "Plant Diagnosis",
-    diagnosisPlaceholder: "Your plant diagnosis will appear here after a scan.",
     speciesLabel: "Plant Species",
     noTargetScanned: "No Target Scanned",
     statusReady: "Ready",
@@ -49,6 +47,7 @@ const UI_TEXT = {
   },
   te: {
     appName: "డాక్టర్ ప్లాంట్ AI",
+    badge: "ఎక్స్‌పో ప్రో",
     subTitle: "క్షణాల్లో AI రోగ నిర్ధారణ & బహుభాషా చికిత్స ప్రణాళిక",
     newScan: "కొత్త స్కాన్",
     none: "ఏదీ లేదు",
@@ -56,20 +55,18 @@ const UI_TEXT = {
     leaf: "ఆకు",
     plant: "మొక్క",
     tree: "చెట్టు",
-    scans: "మొత్తం స్కాన్లు",
+    scans: "మొత్తం స్కాన్‌లు",
     healthy: "ఆరోగ్యకరమైనవి",
     diseased: "వ్యాధిగ్రస్తులు",
     accuracy: "ఖచ్చితత్వ రేటు",
     scanTitle: "స్కాన్ చేయడానికి సిద్ధంగా ఉంది",
-    scanSub: "లైవ్ కెమెరా తెరిచి లేదా ఫోటోను అప్‌‌‌లోడ్ చేసి స్కాన్ చేయండి",
+    scanSub: "లైవ్ కెమెరా తెరిచి లేదా ఫోటోను అప్‌లోడ్ చేసి స్కాన్ చేయండి",
     openCamera: "కెమెరా తెరవండి",
     captureBtn: "ఫోటో తీసి విశ్లేషించండి",
     chooseFile: "ఫైల్‌ని ఎంచుకోండి",
     scanning: "విశ్లేషిస్తోంది...",
     docHeader: "AI డాక్టర్ రోగనిర్ధారణ",
     docPlaceholder: "AI రోగనిర్ధారణ మరియు చికిత్స వినడానికి ఒక మొక్కను స్కాన్ చేయండి...",
-    diagnosisTitle: "మొక్క రోగ నిర్ధారణ",
-    diagnosisPlaceholder: "స్కాన్ చేసిన తర్వాత మొక్క రోగ నిర్ధారణ ఇక్కడ కనిపిస్తుంది.",
     speciesLabel: "మొక్క రకం / పేరు",
     noTargetScanned: "ఏదీ స్కాన్ చేయలేదు",
     statusReady: "సిద్ధంగా ఉంది",
@@ -85,6 +82,7 @@ const UI_TEXT = {
   },
   hi: {
     appName: "डॉ. प्लांट AI",
+    badge: "एक्सपो प्रो",
     subTitle: "तत्काल AI निदान और बहुभाषी उपचार योजना",
     newScan: "नया स्कैन",
     none: "कोई नहीं",
@@ -104,8 +102,6 @@ const UI_TEXT = {
     scanning: "विश्लेषण हो रहा है...",
     docHeader: "AI डॉक्टर निदान",
     docPlaceholder: "AI निदान और उपचार सुनने के लिए पौधे का स्कैन चलाएं...",
-    diagnosisTitle: "पौधे का निदान",
-    diagnosisPlaceholder: "स्कैन के बाद पौधे का निदान यहां दिखाई देगा।",
     speciesLabel: "पौधे की प्रजाति",
     noTargetScanned: "कोई स्कैन नहीं हुआ",
     statusReady: "तैयार है",
@@ -121,6 +117,7 @@ const UI_TEXT = {
   },
   ta: {
     appName: "டாக்டர் பிளான்ட் AI",
+    badge: "எக்ஸ்போ புரோ",
     subTitle: "உடனடி AI நோய் கண்டறிதல் மற்றும் பலமொழி சிகிச்சை திட்டம்",
     newScan: "புதிய ஸ்கேன்",
     none: "எதுவுமில்லை",
@@ -140,8 +137,6 @@ const UI_TEXT = {
     scanning: "ஆராய்கிறது...",
     docHeader: "AI மருத்துவர் கண்டறிதல்",
     docPlaceholder: "AI நோய் கண்டறிதலைக் கேட்க தாவரத்தை ஸ்கேன் செய்யவும்...",
-    diagnosisTitle: "தாவர நோயறிதல்",
-    diagnosisPlaceholder: "ஸ்கேன் செய்த பிறகு தாவர நோயறிதல் இங்கே தோன்றும்.",
     speciesLabel: "தாவர வகை",
     noTargetScanned: "எதுவும் ஸ்கேன் செய்யப்படவில்லை",
     statusReady: "தயார்",
@@ -157,6 +152,7 @@ const UI_TEXT = {
   },
   kn: {
     appName: "ಡಾ. ಪ್ಲಾಂಟ್ AI",
+    badge: "ಎಕ್ಸ್‌ಪೋ ಪ್ರೊ",
     subTitle: "ತಕ್ಷಣದ AI ರೋಗನಿರ್ಣಯ ಮತ್ತು ಬಹುಭಾಷಾ ಚಿಕಿತ್ಸಾ ಯೋಜನೆ",
     newScan: "ಹೊಸ ಸ್ಕ್ಯಾನ್",
     none: "ಯಾವುದೂ ಇಲ್ಲ",
@@ -176,8 +172,6 @@ const UI_TEXT = {
     scanning: "ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ...",
     docHeader: "AI ವೈದ್ಯರ ರೋಗನಿರ್ಣಯ",
     docPlaceholder: "AI ವಿವರಣೆ ಕೇಳಲು ಸಸ್ಯವನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ...",
-    diagnosisTitle: "ಸಸ್ಯದ ರೋಗನಿರ್ಣಯ",
-    diagnosisPlaceholder: "ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ನಂತರ ಸಸ್ಯದ ರೋಗನಿರ್ಣಯ ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ.",
     speciesLabel: "ಸಸ್ಯದ ತಳಿ",
     noTargetScanned: "ಯಾವುದೇ ಸ್ಕ್ಯಾನ್ ಆಗಿಲ್ಲ",
     statusReady: "ಸಿದ್ಧವಾಗಿದೆ",
@@ -193,6 +187,7 @@ const UI_TEXT = {
   },
   ml: {
     appName: "ഡോ. പ്ലാന്റ് AI",
+    badge: "എക്സ്പോ പ്രോ",
     subTitle: "തൽക്ഷണ AI രോഗനിർണ്ണയവും ചികിത്സാ പദ്ധതിയും",
     newScan: "പുതിയ സ്കാൻ",
     none: "ഒന്നുമില്ല",
@@ -205,15 +200,13 @@ const UI_TEXT = {
     diseased: "രോഗബാധിതമായവ",
     accuracy: "കൃത്യത നിരക്ക്",
     scanTitle: "സ്കാൻ ചെയ്യാൻ തയ്യാറാണ്",
-    scanSub: "ലൈവ് ക്യാമറ തുറക്കുക അല്ലെങ്കിൽ ഫോട്ടോ അപ്‌‌ലോഡ് ചെയ്യുക",
+    scanSub: "ലൈവ് ക്യാമറ തുറക്കുക അല്ലെങ്കിൽ ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യുക",
     openCamera: "ക്യാമറ തുറക്കുക",
     captureBtn: "ഫോട്ടോ എടുത്തു വിശകലനം ചെയ്യുക",
     chooseFile: "ഫയൽ തിരഞ്ഞെടുക്കുക",
     scanning: "വിശകലനം ചെയ്യുന്നു...",
     docHeader: "AI ഡാക്ടറുടെ രോഗനിർണ്ണയം",
     docPlaceholder: "AI ശബ്ദം കേൾക്കാൻ ചെടി സ്കാൻ ചെയ്യുക...",
-    diagnosisTitle: "ചെടിയുടെ രോഗനിർണ്ണയം",
-    diagnosisPlaceholder: "സ്കാൻ ചെയ്ത ശേഷം ചെടിയുടെ രോഗനിർണ്ണയം ഇവിടെ കാണാം.",
     speciesLabel: "ചെടിയുടെ ഇനം",
     noTargetScanned: "സ്കാൻ ചെയ്തിട്ടില്ല",
     statusReady: "തയ്യാറാണ്",
@@ -229,6 +222,7 @@ const UI_TEXT = {
   }
 };
 
+// Web Speech Synthesis Audio Player
 const playVoiceSummary = (speechSummary, languageCode = 'en') => {
   if (!('speechSynthesis' in window)) return;
 
@@ -304,11 +298,13 @@ export default function ExpoDashboard() {
     setIsScanning(false);
   }, []);
 
+  // Updated Base64 JSON Vercel Backend Execution with Image Compression
   const executeScan = async (file, targetLang, targetType) => {
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     setIsScanning(true);
 
     try {
+      // Helper function to compress and convert File/Blob to Base64
       const convertBase64 = (fileData) => {
         return new Promise((resolve, reject) => {
           const reader = new FileReader();
@@ -339,7 +335,8 @@ export default function ExpoDashboard() {
               canvas.height = height;
               const ctx = canvas.getContext('2d');
               ctx.drawImage(img, 0, 0, width, height);
-
+              
+              // Compress to JPEG with 70% quality
               resolve(canvas.toDataURL('image/jpeg', 0.7));
             };
             img.onerror = (error) => reject(error);
@@ -349,12 +346,23 @@ export default function ExpoDashboard() {
       };
 
       const base64Image = await convertBase64(file);
-      const res = await scanPlantImage({
-        imageBase64: base64Image,
-        mimeType: 'image/jpeg',
-        language: targetLang || 'en',
-        scanType: targetType || 'leaf'
+
+      const API_URL = import.meta.env.VITE_API_URL ||
+        (window.location.hostname.includes('localhost') ? 'http://localhost:5000/api' : '/api');
+      const response = await fetch(`${API_URL}/scan`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          imageBase64: base64Image,
+          mimeType: 'image/jpeg',
+          language: targetLang || 'en',
+          scanType: targetType || 'leaf'
+        })
       });
+
+      const res = await response.json();
 
       if (res?.success) {
         setScanResult(res.data);
@@ -363,11 +371,11 @@ export default function ExpoDashboard() {
           playVoiceSummary(res.data.speechSummary, targetLang);
         }
       } else {
-        alert(`Scan failed: ${res?.error || 'Please upload a clearer image.'}`);
+        alert(`Scan failed: ${res?.error || "Please upload a clearer image."}`);
       }
     } catch (err) {
       console.error('Scan Error Payload:', err);
-      alert(`Backend Error: ${err.message || 'Network Error'}`);
+      alert('Backend Error: Network Error');
     } finally {
       setIsScanning(false);
     }
@@ -379,47 +387,25 @@ export default function ExpoDashboard() {
     await executeScan(file, language, scanType);
   };
 
-  const handleDownloadPdf = () => {
-    const reportElement = document.getElementById('diagnostic-report-card');
-    if (!reportElement || !scanResult) {
-      alert(t.noData);
-      return;
-    }
-
-    const opt = {
-      margin: 0.5,
-      filename: `DrPlantAI_Report_${Date.now()}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
-
-    html2pdf().set(opt).from(reportElement).save();
-  };
-
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50/80 via-teal-50/30 to-slate-100 text-slate-800 flex flex-col font-sans">
       
-      {/* Dashboard Top Header Section with Centered Plant Image and Title */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-sm border border-emerald-100">
-        
-        {/* Centered Brand Title with Attractive Green Plant Sprout Icon */}
-        <div className="flex items-center justify-center gap-2.5 mx-auto md:mx-0">
-          <div className="p-2 bg-emerald-100 rounded-xl flex items-center justify-center shadow-inner">
-            <Sprout className="w-6 h-6 text-emerald-600 animate-pulse" />
+      {/* Header Bar */}
+      <header className="bg-white/80 backdrop-blur-md border-b border-emerald-100/80 px-6 py-4 flex flex-wrap items-center justify-between gap-4 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 bg-emerald-100/80 border border-emerald-200 rounded-xl shadow-inner">
+            <Bot className="w-7 h-7 text-emerald-700" />
           </div>
-          <div className="text-center md:text-left">
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-              {t.appName}
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-500 font-medium">
-              {t.subTitle}
-            </p>
+          <div>
+            <h1 className="text-xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
+              {t.appName} <span className="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full border border-emerald-300 font-bold">{t.badge}</span>
+            </h1>
+            <p className="text-xs text-slate-500 font-medium">{t.subTitle}</p>
           </div>
         </div>
 
-        {/* Action Controls: New Scan, Target Toggle & Multilingual Selector */}
-        <div className="flex items-center gap-3 flex-wrap justify-center">
+        {/* Action Controls */}
+        <div className="flex items-center gap-3 flex-wrap">
           {scanResult && (
             <button
               onClick={handleResetScan}
@@ -463,11 +449,10 @@ export default function ExpoDashboard() {
             </select>
           </div>
         </div>
-
-      </div>
+      </header>
 
       {/* Stats Metric Bar */}
-      <div className="bg-white/60 backdrop-blur-md border border-emerald-100 px-6 py-3 rounded-2xl shadow-sm">
+      <div className="bg-white/60 backdrop-blur-md border-b border-emerald-100 px-6 py-3">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
           <div className="flex items-center justify-center gap-2">
             <Activity className="w-4 h-4 text-emerald-600" />
@@ -492,11 +477,11 @@ export default function ExpoDashboard() {
         </div>
       </div>
 
-      {/* Main Container Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6" id="pdf-report-area">
+      {/* Main Container */}
+      <main className="flex-1 p-6 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6" id="pdf-report-area">
         
-        {/* Left Section - Scanner Controls & Speech Summary */}
-        <div className="flex flex-col gap-6">
+        {/* Left Section - Scanner Controls */}
+        <div className="lg:col-span-5 flex flex-col gap-6">
           <div className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-emerald-100 shadow-sm flex flex-col items-center justify-center text-center">
             
             {/* Embedded Live Scanner Component */}
@@ -545,7 +530,7 @@ export default function ExpoDashboard() {
           <div className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-emerald-100 shadow-sm">
             <div className="flex items-center gap-3 mb-3">
               <div className="p-2 bg-emerald-100 rounded-xl text-emerald-700">
-                <Sprout className="w-5 h-5" />
+                <Bot className="w-5 h-5" />
               </div>
               <h3 className="text-sm font-bold text-slate-900">{t.docHeader}</h3>
             </div>
@@ -555,8 +540,8 @@ export default function ExpoDashboard() {
           </div>
         </div>
 
-        {/* Right Section - Diagnostic Output & Treatment Cards */}
-        <div className="flex flex-col gap-6">
+        {/* Right Section - Diagnostic Output */}
+        <div className="lg:col-span-7 flex flex-col gap-6">
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="md:col-span-1 bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-emerald-100 shadow-sm flex flex-col items-center justify-center text-center">
@@ -568,7 +553,7 @@ export default function ExpoDashboard() {
               </div>
             </div>
 
-            <div id="diagnostic-report-card" className="md:col-span-2 bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-emerald-100 shadow-sm flex flex-col justify-between">
+            <div className="md:col-span-2 bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-emerald-100 shadow-sm flex flex-col justify-between">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-emerald-600">{t.speciesLabel}</span>
                 <h2 className="text-2xl font-black text-slate-900 mt-1">
@@ -578,7 +563,7 @@ export default function ExpoDashboard() {
               
               <div className="mt-4 flex items-center justify-between gap-2">
                 <button
-                  onClick={handleDownloadPdf}
+                  onClick={() => scanResult ? window.print() : alert(t.noData)}
                   className="flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-colors shadow-sm"
                 >
                   <Download className="w-3.5 h-3.5 text-emerald-400" />
@@ -598,18 +583,13 @@ export default function ExpoDashboard() {
           </div>
 
           {/* Diagnosis Result Render */}
-          {scanResult ? (
+          {scanResult && (
             <DiagnosisResult 
               diagnosisData={{
                 diseaseName: scanResult.diseaseName || scanResult.plantName,
                 description: scanResult.description || scanResult.speechSummary
               }} 
             />
-          ) : (
-            <section className="bg-slate-900 p-4 rounded-xl text-white space-y-2">
-              <h3 className="text-lg font-bold text-emerald-400">{t.diagnosisTitle}</h3>
-              <p className="text-sm text-slate-300">{t.diagnosisPlaceholder}</p>
-            </section>
           )}
 
           {/* Treatment Cards Grid */}
@@ -639,7 +619,7 @@ export default function ExpoDashboard() {
 
         </div>
 
-      </div>
+      </main>
     </div>
   );
 }
