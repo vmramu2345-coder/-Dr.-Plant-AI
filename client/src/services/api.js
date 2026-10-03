@@ -6,8 +6,8 @@ const getApiBaseUrl = () => {
   if (window.location.hostname.includes('localhost')) {
     return 'http://localhost:5000/api';
   }
-  // Production frontend requests go directly to the Render API, avoiding Vercel API rewrites.
-  return import.meta.env.VITE_API_URL || 'https://dr-plant-ai.onrender.com/api';
+  // Use Render directly in production so stale Vercel environment overrides cannot redirect API calls.
+  return 'https://dr-plant-ai.onrender.com/api';
 };
 
 export const API_BASE_URL = getApiBaseUrl();
