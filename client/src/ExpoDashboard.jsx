@@ -239,6 +239,31 @@ const playVoiceSummary = (speechSummary, languageCode = 'en') => {
   window.speechSynthesis.speak(utterance);
 };
 
+const buildVoiceSummary = (result, translations) => {
+  const treatmentRecommendations = [
+    {
+      label: translations.water,
+      value: result?.careRequirements?.watering
+        || result?.careRequirements?.water
+        || result?.treatmentCards?.watering
+    },
+    {
+      label: translations.organic,
+      value: result?.treatmentCards?.organicSolution || result?.treatmentCards?.organic
+    },
+    {
+      label: translations.chemical,
+      value: result?.treatmentCards?.chemicalSpray || result?.treatmentCards?.chemical
+    },
+    { label: translations.prevention, value: result?.treatmentCards?.prevention }
+  ];
+  const treatmentSummary = `${translations.treatmentTitle}. ${treatmentRecommendations
+    .map(({ label, value }) => `${label}: ${value || translations.noData}.`)
+    .join(' ')}`;
+
+  return [result?.speechSummary, treatmentSummary].filter(Boolean).join('. ');
+};
+
 export default function ExpoDashboard() {
   const [language, setLanguage] = useState('en');
   const [scanType, setScanType] = useState('leaf');
@@ -274,8 +299,11 @@ export default function ExpoDashboard() {
 
     if (currentFile) {
       await executeScan(currentFile, selectedLang, scanType);
-    } else if (scanResult?.speechSummary) {
-      playVoiceSummary(scanResult.speechSummary, selectedLang);
+    } else if (scanResult) {
+      playVoiceSummary(
+        buildVoiceSummary(scanResult, UI_TEXT[selectedLang] || UI_TEXT.en),
+        selectedLang
+      );
     }
   };
 
@@ -369,8 +397,11 @@ export default function ExpoDashboard() {
       if (res?.success) {
         setScanResult(res.data);
         if (res.updatedStats) setStats(res.updatedStats);
-        if (res.data?.speechSummary && targetLang) {
-          playVoiceSummary(res.data.speechSummary, targetLang);
+        if (targetLang) {
+          playVoiceSummary(
+            buildVoiceSummary(res.data, UI_TEXT[targetLang] || UI_TEXT.en),
+            targetLang
+          );
         }
       } else {
         alert(`Scan failed: ${res?.error || "Please upload a clearer image."}`);
@@ -395,43 +426,24 @@ export default function ExpoDashboard() {
       
       {/* Header Bar */}
       <header className="bg-white/80 backdrop-blur-md border-b border-emerald-100/80 px-6 py-4 shadow-sm">
-        <div className="mx-auto mb-4 flex w-full max-w-7xl items-center justify-between gap-2">
+        <div className="mx-auto mb-4 flex w-full max-w-7xl items-center justify-between gap-1">
           <img
             src={schoolLogoLeft}
             alt="First Among Equals school logo"
-            className="h-10 w-10 rounded-lg object-contain sm:h-12 sm:w-12"
+            className="h-8 w-8 rounded-lg object-contain sm:h-12 sm:w-12"
           />
           <div className="flex-1 text-center">
-            <h2 className="text-center text-lg font-extrabold tracking-tight text-white sm:text-xl sm:tracking-wide">
-              <span
-                className="mb-1 sm:mb-0"
-                style={{
-                  background: "#16a34a",
-                  border: "1px solid #15803d",
-                  borderRadius: "0.5rem",
-                  display: "inline-block",
-                  padding: "0.25rem 0.5rem"
-                }}
-              >
-                MONTESSORI INDUS
-              </span>{" "}
-              <span
-                style={{
-                  background: "#16a34a",
-                  border: "1px solid #15803d",
-                  borderRadius: "0.5rem",
-                  display: "inline-block",
-                  padding: "0.25rem 0.5rem"
-                }}
-              >
-                RESIDENTIAL SCHOOL
-              </span>
+            <h2
+              className="inline-block whitespace-nowrap rounded-lg border px-1 py-1 text-[10px] font-extrabold tracking-tight text-white max-[360px]:text-[8px] sm:px-2 sm:text-xl sm:tracking-wide"
+              style={{ backgroundColor: "#16a34a", borderColor: "#15803d" }}
+            >
+              MONTESSORI INDUS RESIDENTIAL SCHOOL
             </h2>
           </div>
           <img
             src={schoolLogoRight}
             alt="Montessori Golden Jubilee school logo"
-            className="h-10 w-10 rounded-lg object-contain sm:h-12 sm:w-12"
+            className="h-8 w-8 rounded-lg object-contain sm:h-12 sm:w-12"
           />
         </div>
 
@@ -614,9 +626,12 @@ export default function ExpoDashboard() {
                   <Download className="w-3.5 h-3.5 text-emerald-400" />
                   {t.downloadPdf}
                 </button>
-                {scanResult?.speechSummary && language && (
+                {scanResult && language && (
                   <button
-                    onClick={() => playVoiceSummary(scanResult.speechSummary, language)}
+                    onClick={() => playVoiceSummary(
+                      buildVoiceSummary(scanResult, UI_TEXT[language] || UI_TEXT.en),
+                      language
+                    )}
                     className="flex items-center gap-1 px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs font-bold border border-emerald-200 transition-colors"
                   >
                     <Volume2 className="w-3.5 h-3.5" />
