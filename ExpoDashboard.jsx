@@ -395,22 +395,21 @@ export default function ExpoDashboard() {
       
       {/* Header Bar */}
       <header className="bg-white/80 backdrop-blur-md border-b border-emerald-100/80 px-6 py-4 shadow-sm">
-        <div className="mx-auto mb-4 flex w-full max-w-7xl items-center justify-between gap-2">
+        <div className="mx-auto mb-4 flex w-full max-w-7xl items-center justify-between gap-1">
           <img
             src={schoolLogoLeft}
             alt="First Among Equals school logo"
-            className="h-10 w-10 rounded-lg object-contain sm:h-12 sm:w-12"
+            className="h-8 w-8 rounded-lg object-contain sm:h-12 sm:w-12"
           />
-          <div className="flex-1 text-center">
-            <h2 className="text-center text-lg font-extrabold tracking-tight text-white sm:text-xl sm:tracking-wide">
+          <div className="min-w-0 flex-1 text-center">
+            <h2 className="whitespace-nowrap text-center text-[10px] font-extrabold tracking-tight text-white max-[360px]:text-[8px] sm:text-xl sm:tracking-wide">
               <span
-                className="mb-1 sm:mb-0"
                 style={{
                   background: "#16a34a",
                   border: "1px solid #15803d",
                   borderRadius: "0.5rem",
                   display: "inline-block",
-                  padding: "0.25rem 0.5rem"
+                  padding: "0.25rem 0.35rem"
                 }}
               >
                 MONTESSORI INDUS
@@ -421,7 +420,7 @@ export default function ExpoDashboard() {
                   border: "1px solid #15803d",
                   borderRadius: "0.5rem",
                   display: "inline-block",
-                  padding: "0.25rem 0.5rem"
+                  padding: "0.25rem 0.35rem"
                 }}
               >
                 RESIDENTIAL SCHOOL
@@ -431,7 +430,7 @@ export default function ExpoDashboard() {
           <img
             src={schoolLogoRight}
             alt="Montessori Golden Jubilee school logo"
-            className="h-10 w-10 rounded-lg object-contain sm:h-12 sm:w-12"
+            className="h-8 w-8 rounded-lg object-contain sm:h-12 sm:w-12"
           />
         </div>
 
