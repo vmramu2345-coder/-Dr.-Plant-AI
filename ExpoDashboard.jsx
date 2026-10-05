@@ -409,21 +409,11 @@ export default function ExpoDashboard() {
                   border: "1px solid #15803d",
                   borderRadius: "0.5rem",
                   display: "inline-block",
-                  padding: "0.25rem 0.35rem"
+                  padding: "0.25rem 0.35rem",
+                  whiteSpace: "nowrap"
                 }}
               >
-                MONTESSORI INDUS
-              </span>{" "}
-              <span
-                style={{
-                  background: "#16a34a",
-                  border: "1px solid #15803d",
-                  borderRadius: "0.5rem",
-                  display: "inline-block",
-                  padding: "0.25rem 0.35rem"
-                }}
-              >
-                RESIDENTIAL SCHOOL
+                MONTESSORI INDUS RESIDENTIAL SCHOOL
               </span>
             </h2>
           </div>
