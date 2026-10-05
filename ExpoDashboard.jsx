@@ -401,10 +401,15 @@ export default function ExpoDashboard() {
             alt="First Among Equals school logo"
             className="h-10 w-10 rounded-lg object-contain sm:h-12 sm:w-12"
           />
-          <h2 className="flex-1 rounded-xl border border-emerald-700 bg-emerald-600 px-2 py-1 text-center text-lg font-extrabold tracking-tight text-white shadow-inner sm:text-xl sm:tracking-wide">
-            <span className="block sm:inline">MONTESSORI INDUS</span>{" "}
-            <span className="block sm:inline">RESIDENTIAL SCHOOL</span>
-          </h2>
+          <div className="flex-1 text-center">
+            <h2
+              className="inline-block rounded-xl border px-2 py-1 text-center text-lg font-extrabold tracking-tight text-white shadow-inner sm:text-xl sm:tracking-wide"
+              style={{ backgroundColor: "#059669", borderColor: "#047857" }}
+            >
+              <span className="block sm:inline">MONTESSORI INDUS</span>{" "}
+              <span className="block sm:inline">RESIDENTIAL SCHOOL</span>
+            </h2>
+          </div>
           <img
             src={schoolLogoRight}
             alt="Montessori Golden Jubilee school logo"
