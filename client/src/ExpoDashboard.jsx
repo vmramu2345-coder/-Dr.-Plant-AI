@@ -402,7 +402,8 @@ export default function ExpoDashboard() {
             className="h-10 w-10 rounded-lg object-contain sm:h-12 sm:w-12"
           />
           <h2 className="text-center text-sm font-extrabold tracking-wide text-slate-800 sm:text-lg">
-            MONTESSORI INDUS RESIDENTIAL SCHOOL
+            <span className="block sm:inline">MONTESSORI INDUS</span>{" "}
+            <span className="block sm:inline">RESIDENTIAL SCHOOL</span>
           </h2>
           <img
             src={schoolLogoRight}
