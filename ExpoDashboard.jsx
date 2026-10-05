@@ -404,14 +404,25 @@ export default function ExpoDashboard() {
           <div className="flex-1 text-center">
             <h2 className="text-center text-lg font-extrabold tracking-tight text-white sm:text-xl sm:tracking-wide">
               <span
-                className="mb-1 inline-block rounded-lg border px-2 py-1 sm:mb-0"
-                style={{ backgroundColor: "#059669", borderColor: "#047857" }}
+                className="mb-1 sm:mb-0"
+                style={{
+                  background: "#16a34a",
+                  border: "1px solid #15803d",
+                  borderRadius: "0.5rem",
+                  display: "inline-block",
+                  padding: "0.25rem 0.5rem"
+                }}
               >
                 MONTESSORI INDUS
               </span>{" "}
               <span
-                className="inline-block rounded-lg border px-2 py-1"
-                style={{ backgroundColor: "#059669", borderColor: "#047857" }}
+                style={{
+                  background: "#16a34a",
+                  border: "1px solid #15803d",
+                  borderRadius: "0.5rem",
+                  display: "inline-block",
+                  padding: "0.25rem 0.5rem"
+                }}
               >
                 RESIDENTIAL SCHOOL
               </span>
