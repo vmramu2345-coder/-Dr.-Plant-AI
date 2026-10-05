@@ -401,7 +401,7 @@ export default function ExpoDashboard() {
             alt="First Among Equals school logo"
             className="h-10 w-10 rounded-lg object-contain sm:h-12 sm:w-12"
           />
-          <h2 className="flex-1 text-center text-lg font-extrabold tracking-tight text-slate-800 sm:text-xl sm:tracking-wide">
+          <h2 className="flex-1 rounded-xl border border-emerald-200 bg-emerald-100/80 px-2 py-1 text-center text-lg font-extrabold tracking-tight text-slate-800 shadow-inner sm:text-xl sm:tracking-wide">
             <span className="block sm:inline">MONTESSORI INDUS</span>{" "}
             <span className="block sm:inline">RESIDENTIAL SCHOOL</span>
           </h2>
