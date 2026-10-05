@@ -402,12 +402,19 @@ export default function ExpoDashboard() {
             className="h-10 w-10 rounded-lg object-contain sm:h-12 sm:w-12"
           />
           <div className="flex-1 text-center">
-            <h2
-              className="inline-block rounded-xl border px-2 py-1 text-center text-lg font-extrabold tracking-tight text-white shadow-inner sm:text-xl sm:tracking-wide"
-              style={{ backgroundColor: "#059669", borderColor: "#047857" }}
-            >
-              <span className="block sm:inline">MONTESSORI INDUS</span>{" "}
-              <span className="block sm:inline">RESIDENTIAL SCHOOL</span>
+            <h2 className="text-center text-lg font-extrabold tracking-tight text-white sm:text-xl sm:tracking-wide">
+              <span
+                className="mb-1 inline-block rounded-lg border px-2 py-1 sm:mb-0"
+                style={{ backgroundColor: "#059669", borderColor: "#047857" }}
+              >
+                MONTESSORI INDUS
+              </span>{" "}
+              <span
+                className="inline-block rounded-lg border px-2 py-1"
+                style={{ backgroundColor: "#059669", borderColor: "#047857" }}
+              >
+                RESIDENTIAL SCHOOL
+              </span>
             </h2>
           </div>
           <img
