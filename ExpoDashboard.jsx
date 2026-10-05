@@ -239,6 +239,31 @@ const playVoiceSummary = (speechSummary, languageCode = 'en') => {
   window.speechSynthesis.speak(utterance);
 };
 
+const buildVoiceSummary = (result, translations) => {
+  const treatmentRecommendations = [
+    {
+      label: translations.water,
+      value: result?.careRequirements?.watering
+        || result?.careRequirements?.water
+        || result?.treatmentCards?.watering
+    },
+    {
+      label: translations.organic,
+      value: result?.treatmentCards?.organicSolution || result?.treatmentCards?.organic
+    },
+    {
+      label: translations.chemical,
+      value: result?.treatmentCards?.chemicalSpray || result?.treatmentCards?.chemical
+    },
+    { label: translations.prevention, value: result?.treatmentCards?.prevention }
+  ];
+  const treatmentSummary = `${translations.treatmentTitle}. ${treatmentRecommendations
+    .map(({ label, value }) => `${label}: ${value || translations.noData}.`)
+    .join(' ')}`;
+
+  return [result?.speechSummary, treatmentSummary].filter(Boolean).join('. ');
+};
+
 export default function ExpoDashboard() {
   const [language, setLanguage] = useState('en');
   const [scanType, setScanType] = useState('leaf');
@@ -274,8 +299,11 @@ export default function ExpoDashboard() {
 
     if (currentFile) {
       await executeScan(currentFile, selectedLang, scanType);
-    } else if (scanResult?.speechSummary) {
-      playVoiceSummary(scanResult.speechSummary, selectedLang);
+    } else if (scanResult) {
+      playVoiceSummary(
+        buildVoiceSummary(scanResult, UI_TEXT[selectedLang] || UI_TEXT.en),
+        selectedLang
+      );
     }
   };
 
@@ -369,8 +397,11 @@ export default function ExpoDashboard() {
       if (res?.success) {
         setScanResult(res.data);
         if (res.updatedStats) setStats(res.updatedStats);
-        if (res.data?.speechSummary && targetLang) {
-          playVoiceSummary(res.data.speechSummary, targetLang);
+        if (targetLang) {
+          playVoiceSummary(
+            buildVoiceSummary(res.data, UI_TEXT[targetLang] || UI_TEXT.en),
+            targetLang
+          );
         }
       } else {
         alert(`Scan failed: ${res?.error || "Please upload a clearer image."}`);
@@ -603,9 +634,12 @@ export default function ExpoDashboard() {
                   <Download className="w-3.5 h-3.5 text-emerald-400" />
                   {t.downloadPdf}
                 </button>
-                {scanResult?.speechSummary && language && (
+                {scanResult && language && (
                   <button
-                    onClick={() => playVoiceSummary(scanResult.speechSummary, language)}
+                    onClick={() => playVoiceSummary(
+                      buildVoiceSummary(scanResult, UI_TEXT[language] || UI_TEXT.en),
+                      language
+                    )}
                     className="flex items-center gap-1 px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs font-bold border border-emerald-200 transition-colors"
                   >
                     <Volume2 className="w-3.5 h-3.5" />
