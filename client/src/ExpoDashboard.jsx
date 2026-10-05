@@ -14,7 +14,6 @@ import DiagnosisResult from './components/DiagnosisResult';
 const UI_TEXT = {
   en: {
     appName: "Dr. Plant AI",
-    badge: "Expo Pro",
     subTitle: "Instant AI Diagnostics & Multilingual Treatment Plan",
     newScan: "New Scan",
     none: "None",
@@ -49,7 +48,6 @@ const UI_TEXT = {
   },
   te: {
     appName: "డాక్టర్ ప్లాంట్ AI",
-    badge: "ఎక్స్‌పో ప్రో",
     subTitle: "క్షణాల్లో AI రోగ నిర్ధారణ & బహుభాషా చికిత్స ప్రణాళిక",
     newScan: "కొత్త స్కాన్",
     none: "ఏదీ లేదు",
@@ -84,7 +82,6 @@ const UI_TEXT = {
   },
   hi: {
     appName: "डॉ. प्लांट AI",
-    badge: "एक्सपो प्रो",
     subTitle: "तत्काल AI निदान और बहुभाषी उपचार योजना",
     newScan: "नया स्कैन",
     none: "कोई नहीं",
@@ -119,7 +116,6 @@ const UI_TEXT = {
   },
   ta: {
     appName: "டாக்டர் பிளான்ட் AI",
-    badge: "எக்ஸ்போ புரோ",
     subTitle: "உடனடி AI நோய் கண்டறிதல் மற்றும் பலமொழி சிகிச்சை திட்டம்",
     newScan: "புதிய ஸ்கேன்",
     none: "எதுவுமில்லை",
@@ -154,7 +150,6 @@ const UI_TEXT = {
   },
   kn: {
     appName: "ಡಾ. ಪ್ಲಾಂಟ್ AI",
-    badge: "ಎಕ್ಸ್‌ಪೋ ಪ್ರೊ",
     subTitle: "ತಕ್ಷಣದ AI ರೋಗನಿರ್ಣಯ ಮತ್ತು ಬಹುಭಾಷಾ ಚಿಕಿತ್ಸಾ ಯೋಜನೆ",
     newScan: "ಹೊಸ ಸ್ಕ್ಯಾನ್",
     none: "ಯಾವುದೂ ಇಲ್ಲ",
@@ -189,7 +184,6 @@ const UI_TEXT = {
   },
   ml: {
     appName: "ഡോ. പ്ലാന്റ് AI",
-    badge: "എക്സ്പോ പ്രോ",
     subTitle: "തൽക്ഷണ AI രോഗനിർണ്ണയവും ചികിത്സാ പദ്ധതിയും",
     newScan: "പുതിയ സ്കാൻ",
     none: "ഒന്നുമില്ല",
@@ -423,8 +417,8 @@ export default function ExpoDashboard() {
               <span className="text-2xl" role="img" aria-label="Leaf">🌿</span>
             </div>
             <div>
-              <h1 className="text-xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
-                {t.appName} <span className="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full border border-emerald-300 font-bold">{t.badge}</span>
+              <h1 className="text-xl font-extrabold tracking-tight text-slate-900">
+                {t.appName}
               </h1>
               <p className="text-xs text-slate-500 font-medium">{t.subTitle}</p>
             </div>
